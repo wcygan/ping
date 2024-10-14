@@ -7,72 +7,11 @@ the problem of sharing schemas between services.
 
 ### Setup `buf`
 
-Create a `buf.gen.yaml` file with the following content:
-
-(File is located at: `buf.gen.yaml`)
-
-```yaml
-version: v1
-managed:
-  enabled: true
-  go_package_prefix:
-    default: github.com/wcygan/proto/generated/go
-plugins:
-  - name: go
-    out: generated/go
-    opt: paths=source_relative
-```
-
-Create a `buf.yaml` file with the following content:
-
-(File is located at: `proto/buf.yaml`)
-
-```yaml
-version: v1
-name: buf.build/wcygan/ping
-breaking:
-  use:
-    - FILE
-lint:
-  use:
-    - DEFAULT
-```
+Create a [buf.gen.yaml](../buf.gen.yaml) and [buf.yaml](../proto/buf.yaml).
 
 ### Make a Schema
 
-(File is located at: `proto/ping/v1/ping.proto`)
-
-Create a file called `ping.proto` with the following content:
-
-```proto
-syntax = "proto3";
-
-package ping.v1;
-
-service PingService {
-  rpc Ping (PingRequest) returns (PingResponse);
-  rpc PingCount (PingCountRequest) returns (PingCountResponse);
-}
-
-message PingRequest {
-  int64 timestamp_ms = 1;
-}
-
-message PingResponse {}
-
-message TimeRange {
-  int64 start = 1;
-  int64 end = 2;
-}
-
-message PingCountRequest {
-  optional TimeRange time_range = 1;
-}
-
-message PingCountResponse {
-  int64 ping_count = 1;
-}
-```
+Create a proto file, [ping.proto](../proto/ping/v1/ping.proto).
 
 ### Setting up BSR 
 
@@ -114,7 +53,7 @@ go get buf.build/gen/go/wcygan/ping/connectrpc/go@latest
 go mod tidy
 ```
 
-Then, I can begin writing code using the imported SDK
+Then, I can begin writing code using the imported SDK (see [main.go](../server/main.go)):
 
 ```go
 import (
