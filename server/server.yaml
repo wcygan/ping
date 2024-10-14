@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ping-server
+  name: server
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: ping-server
+      app: server
   template:
     metadata:
       labels:
-        app: ping-server
+        app: server
     spec:
       containers:
-        - name: ping-server
-          image: ping-server
+        - name: server
+          image: server
           ports:
             - containerPort: 8080
           resources:
@@ -50,11 +50,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ping-server
+  name: server
 spec:
   type: ClusterIP
   selector:
-    app: ping-server
+    app: server
   ports:
     - port: 8080
       targetPort: 8080
@@ -62,12 +62,12 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ping-server-hpa
+  name: server-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: ping-server
+    name: server
   minReplicas: 2
   maxReplicas: 10
   metrics:

@@ -1,24 +1,10 @@
-apiVersion: skaffold/v3
+apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
-  name: app
-build:
-  artifacts:
-    - image: ping-server
-      context: server
-      docker:
-        dockerfile: server/Dockerfile
-  tagPolicy:
-    gitCommit: {}
-  local:
-    useBuildkit: true
-manifests:
-  rawYaml:
-    - server/server.yaml
+  name: ping-application
+requires:
+  - configs:
+      - server
+    path: server/skaffold.yaml
 deploy:
-  kubectl: {}
-portForward:
-  - resourceType: service
-    resourceName: ping-server
-    port: 8080
-    localPort: 8080
+  tolerateFailuresUntilDeadline: true
