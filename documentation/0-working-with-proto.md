@@ -30,7 +30,7 @@ buf registry login buf.build
 ### Doing the push
 
 ```bash
-buf push
+buf push proto
 ```
 
 ### Automating the push
