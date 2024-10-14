@@ -2,26 +2,41 @@ syntax = "proto3";
 
 package ping.v1;
 
+// PingService defines the Ping service with two RPC methods.
 service PingService {
+  // Ping sends a ping request and returns a ping response.
   rpc Ping (PingRequest) returns (PingResponse);
+
+  // PingCount sends a ping count request and returns a ping count response.
   rpc PingCount (PingCountRequest) returns (PingCountResponse);
 }
 
+// PingRequest is the request message for the Ping RPC.
 message PingRequest {
+  // The timestamp in milliseconds when the ping was sent.
   int64 timestamp_ms = 1;
 }
 
+// PingResponse is the response message for the Ping RPC.
 message PingResponse {}
 
+// TimeRange defines a range of time with a start and end timestamp.
 message TimeRange {
+  // The start timestamp in milliseconds.
   int64 start = 1;
+
+  // The end timestamp in milliseconds.
   int64 end = 2;
 }
 
+// PingCountRequest is the request message for the PingCount RPC.
 message PingCountRequest {
+  // An optional time range for which to count pings.
   optional TimeRange time_range = 1;
 }
 
+// PingCountResponse is the response message for the PingCount RPC.
 message PingCountResponse {
+  // The count of pings within the specified time range.
   int64 ping_count = 1;
 }
