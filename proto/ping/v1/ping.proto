@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package ping;
+
+service PingService {
+  rpc SendPing (PingRequest) returns (PingResponse);
+  rpc GetPingCount (PingCountRequest) returns (PingCountResponse);
+}
+
+message PingRequest {
+  int64 timestamp_ms = 1;
+}
+
+message PingResponse {}
+
+message TimeRange {
+  int64 start = 1;
+  int64 end = 2;
+}
+
+message PingCountRequest {
+  TimeRange time_range = 1;
+}
+
+message PingCountResponse {
+  int64 ping_count = 1;
+}
