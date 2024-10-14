@@ -100,13 +100,13 @@ Probably you can use github actions to push the schema to BSR. Here is an exampl
 
 https://github.com/bufbuild/buf-push-action
 
-Yes, I have figured it out in [buf-generate-proto.yaml](.github/workflows/buf-generate-proto.yaml) github action
+Yes, I have figured it out in [buf-generate-proto.yaml](../.github/workflows/buf-generate-proto.yaml) github action
 
 ## Grand Finale: fetching generated code and running the program
 
 ### Fetching generated code
 
-In [server](server), run these commands to add dependencies to [go.mod](server/go.mod)
+In [server](../server), run these commands to add dependencies to [go.mod](../server/go.mod)
 
 ```bash
 go get buf.build/gen/go/wcygan/ping/protocolbuffers/go@latest
@@ -128,7 +128,7 @@ import (
 
 ### Running the program
 
-In [server](server), run the following command:
+In [server](../server), run the following command:
 
 ```bash
 go run .          

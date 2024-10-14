@@ -1,5 +1,9 @@
 # Ping (Client and Server)
 
+This is a basic application which aims to experiment with Buf Schema Registry (BSR) and Cloud Native Postgres (CNPG). 
+
+The application consists of a client and a server. The client sends a request to the server, and the server responds with a message.
+
 ## Tech Stack
 
 - Go

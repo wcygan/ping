@@ -27,7 +27,7 @@ Run the client container:
 docker run --network ping-network ping-client ping --address http://ping-server:8080
 ```
 
-You can also run the binary directly in [client](client) folder:
+You can also run the binary directly in [client](../client) folder:
 
 ```bash
 go run . ping --address http://:8080
