@@ -7,7 +7,25 @@ the problem of sharing schemas between services.
 
 ### Setup `buf`
 
+Create a `buf.gen.yaml` file with the following content:
+
+(File is located at: `buf.gen.yaml`)
+
+```yaml
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/wcygan/proto/generated/go
+plugins:
+  - name: go
+    out: generated/go
+    opt: paths=source_relative
+```
+
 Create a `buf.yaml` file with the following content:
+
+(File is located at: `proto/buf.yaml`)
 
 ```yaml
 version: v1
