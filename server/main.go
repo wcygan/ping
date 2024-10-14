@@ -16,7 +16,7 @@ type PingServiceServer struct{}
 // Ping handles the Ping RPC.
 func (s *PingServiceServer) Ping(ctx context.Context, req *connect.Request[pingv1.PingRequest]) (*connect.Response[pingv1.PingResponse], error) {
 	timestamp := time.Unix(0, req.Msg.TimestampMs*int64(time.Millisecond)).UTC()
-	log.Printf("Received ping at %s (UTC)", timestamp.Format(time.RFC3339))
+	log.Printf("Received a ping at %s (UTC)", timestamp.Format(time.RFC3339))
 	return connect.NewResponse(&pingv1.PingResponse{}), nil
 }
 
@@ -31,6 +31,10 @@ func main() {
 
 	// Register the PingService with the Connect server.
 	mux.Handle(pingv1connect.NewPingServiceHandler(server))
+
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
 
 	log.Println("Starting server on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
