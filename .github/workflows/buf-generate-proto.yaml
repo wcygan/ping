@@ -14,6 +14,8 @@ jobs:
 
       - name: Set up Buf CLI
         uses: bufbuild/buf-setup-action@v1.45.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push to buf.build
         uses: bufbuild/buf-push-action@v1.2.0
