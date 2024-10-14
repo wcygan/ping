@@ -1,19 +1,34 @@
 Build the docker image using the following command:
 
-Within [ping]() directory, run the following command:
+Run these commands within [ping]() directory.
+
+Build the container images:
 
 ```bash
 docker build -t ping-server -f server/Dockerfile server
+docker build -t ping-client -f client/Dockerfile client
 ```
 
-Note: you can also run it in [server](server) directory like so:
+Create a network:
 
 ```bash
-docker build -t ping-server -f Dockerfile .
+docker network create ping-network
 ```
 
-Run the docker image using the following command:
+Run the server container:
 
 ```bash
-docker run -p 8080:8080 ping-server
+docker run -p 8080:8080 --network ping-network --name ping-server ping-server
+```
+
+Run the client container:
+
+```bash
+docker run --network ping-network ping-client ping --address http://ping-server:8080
+```
+
+You can also run the binary directly in [client](client) folder:
+
+```bash
+go run . ping --address http://:8080
 ```
