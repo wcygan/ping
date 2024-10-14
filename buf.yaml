@@ -1,0 +1,8 @@
+version: v1
+name: buf.build/wcygan/ping
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT

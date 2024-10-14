@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package ping;
+package ping.v1;
 
 service PingService {
-  rpc SendPing (PingRequest) returns (PingResponse);
-  rpc GetPingCount (PingCountRequest) returns (PingCountResponse);
+  rpc Ping (PingRequest) returns (PingResponse);
+  rpc PingCount (PingCountRequest) returns (PingCountResponse);
 }
 
 message PingRequest {
@@ -19,7 +19,7 @@ message TimeRange {
 }
 
 message PingCountRequest {
-  TimeRange time_range = 1;
+  optional TimeRange time_range = 1;
 }
 
 message PingCountResponse {
