@@ -5,7 +5,58 @@ the problem of sharing schemas between services.
 
 ## Pushing schema to BSR
 
-### Setting it up
+### Setup `buf`
+
+Create a `buf.yaml` file with the following content:
+
+```yaml
+version: v1
+name: buf.build/wcygan/ping
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
+```
+
+### Make a Schema
+
+(File is located at: `proto/ping/v1/ping.proto`)
+
+Create a file called `ping.proto` with the following content:
+
+```proto
+syntax = "proto3";
+
+package ping.v1;
+
+service PingService {
+  rpc Ping (PingRequest) returns (PingResponse);
+  rpc PingCount (PingCountRequest) returns (PingCountResponse);
+}
+
+message PingRequest {
+  int64 timestamp_ms = 1;
+}
+
+message PingResponse {}
+
+message TimeRange {
+  int64 start = 1;
+  int64 end = 2;
+}
+
+message PingCountRequest {
+  optional TimeRange time_range = 1;
+}
+
+message PingCountResponse {
+  int64 ping_count = 1;
+}
+```
+
+### Setting up BSR 
 
 Visit: https://buf.build/wcygan
 
@@ -22,7 +73,7 @@ buf registry login buf.build
 ### Doing the push
 
 ```bash
-github.com/wcygan/ping
+buf push
 ```
 
 ### Automating the push
