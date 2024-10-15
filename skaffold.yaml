@@ -3,8 +3,11 @@ kind: Config
 metadata:
   name: ping-application
 requires:
+  # - configs:
+  #     - server
+  #   path: server/skaffold.yaml
   - configs:
-      - server
-    path: server/skaffold.yaml
+      - db
+    path: db/skaffold.yaml
 deploy:
   tolerateFailuresUntilDeadline: true

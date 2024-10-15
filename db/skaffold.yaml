@@ -1,0 +1,15 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: db
+manifests:
+  rawYaml:
+    - ping-db.yaml
+deploy:
+  helm:
+    releases:
+      - name: cnpg
+        repo: https://cloudnative-pg.github.io/charts
+        remoteChart: cloudnative-pg
+        namespace: cnpg-system
+        createNamespace: true

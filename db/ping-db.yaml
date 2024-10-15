@@ -1,36 +1,8 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
-  name: postgres
+  name: pg-cluster
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-        - name: postgres
-          image: postgres:13
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_DB
-              value: mydatabase
-            - name: POSTGRES_USER
-              value: myuser
-            - name: POSTGRES_PASSWORD
-              value: mypassword
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres
-spec:
-  ports:
-    - port: 5432
-  selector:
-    app: postgres
+  instances: 3
+  storage:
+   size: 1Gi
