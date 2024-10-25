@@ -16,8 +16,6 @@ apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: ping-db-config
-requires:
-  - configs: [ping-db-install]
 deploy:
   kubectl:
     flags:
