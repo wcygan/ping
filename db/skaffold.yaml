@@ -1,11 +1,7 @@
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
-  name: db
-manifests:
-  rawYaml:
-    - secret.yaml
-    - ping-db.yaml
+  name: ping-db-install
 deploy:
   helm:
     releases:
@@ -14,3 +10,19 @@ deploy:
         remoteChart: cloudnative-pg
         namespace: cnpg-system
         createNamespace: true
+        wait: true
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: ping-db-config
+requires:
+  - configs: [ping-db-install]
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=default"]
+manifests:
+  rawYaml:
+    - secret.yaml
+    - ping-db.yaml

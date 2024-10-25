@@ -3,9 +3,7 @@ kind: Config
 metadata:
   name: ping-application
 requires:
-  # - configs:
-  #     - server
-  #   path: server/skaffold.yaml
   - configs:
-      - db
+      - ping-db-install
+      - ping-db-config
     path: db/skaffold.yaml
