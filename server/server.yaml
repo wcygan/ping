@@ -17,6 +17,21 @@ spec:
           image: server
           ports:
             - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: pg-cluster-rw
+            - name: DB_NAME
+              value: pingdb
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pinguser-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pinguser-secret
+                  key: password
           resources:
             requests:
               cpu: 100m

@@ -14,9 +14,3 @@ spec:
         name: pinguser-secret
       postInitSQL:
         - ALTER ROLE pinguser WITH LOGIN;
-      postInitApplicationSQL:
-        - CREATE TABLE pings (
-            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            pinged_at TIMESTAMP WITH TIME ZONE
-          );
-        - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO pinguser;

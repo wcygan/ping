@@ -22,8 +22,11 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 # Stage 2: Create a lightweight runtime image
 FROM alpine:3.14
 
-# Copy the built executable from the builder stage
-COPY --from=builder /app/server/server app/server
+# Copy the built executable and migrations from the builder stage
+COPY --from=builder /app/server/server /app/server
+COPY --from=builder /app/server/migrations /app/migrations
+
+WORKDIR /app
 
 # Set the entrypoint to run the executable
 ENTRYPOINT ["/app/server"]
