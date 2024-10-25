@@ -1,3 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cnpg-reader
+rules:
+- apiGroups: ["postgresql.cnpg.io"]
+  resources: ["clusters"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cnpg-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: default
+roleRef:
+  kind: Role
+  name: cnpg-reader
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,6 +34,29 @@ spec:
         app: server
     spec:
       initContainers:
+        - name: wait-for-db
+          image: bitnami/kubectl
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for CNPG cluster to be ready..."
+              until kubectl get cluster pg-cluster -o jsonpath='{.status.instances}' | grep -q "3"; do
+                echo "Waiting for all instances to be created..."
+                sleep 5
+              done
+              
+              until kubectl get cluster pg-cluster -o jsonpath='{.status.readyInstances}' | grep -q "3"; do
+                echo "Waiting for all instances to be ready..."
+                sleep 5
+              done
+              
+              until kubectl get cluster pg-cluster -o jsonpath='{.status.phase}' | grep -q "Running"; do
+                echo "Waiting for cluster to be in Running phase..."
+                sleep 5
+              done
+              
+              echo "CNPG cluster is ready!"
         - name: migrations
           image: server
           command: ["/app/server"]

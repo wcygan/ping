@@ -1,20 +1,21 @@
 package main
 
 import (
-	"buf.build/gen/go/wcygan/ping/connectrpc/go/ping/v1/pingv1connect"
-	pingv1 "buf.build/gen/go/wcygan/ping/protocolbuffers/go/ping/v1"
-	"connectrpc.com/connect"
 	"context"
 	"flag"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"buf.build/gen/go/wcygan/ping/connectrpc/go/ping/v1/pingv1connect"
+	pingv1 "buf.build/gen/go/wcygan/ping/protocolbuffers/go/ping/v1"
+	"connectrpc.com/connect"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // PingServiceServer implements the PingService interface.
