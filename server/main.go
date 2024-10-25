@@ -5,6 +5,7 @@ import (
 	pingv1 "buf.build/gen/go/wcygan/ping/protocolbuffers/go/ping/v1"
 	"connectrpc.com/connect"
 	"context"
+	"flag"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -64,6 +65,9 @@ func runMigrations(dbURL string) error {
 }
 
 func main() {
+	migrateOnly := flag.Bool("migrate-only", false, "Run migrations and exit")
+	flag.Parse()
+
 	// Get database connection details from environment variables
 	dbHost := os.Getenv("DB_HOST")
 	if dbHost == "" {
@@ -85,9 +89,12 @@ func main() {
 	dbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
 		dbUser, dbPass, dbHost, dbName)
 
-	// Run migrations
-	if err := runMigrations(dbURL); err != nil {
-		log.Fatalf("Failed to run migrations: %v", err)
+	if *migrateOnly {
+		if err := runMigrations(dbURL); err != nil {
+			log.Fatalf("Failed to run migrations: %v", err)
+		}
+		log.Println("Migrations completed successfully")
+		return
 	}
 
 	// Connect to the database
@@ -102,6 +109,11 @@ func main() {
 	}
 	defer pool.Close()
 
+	// Test the connection
+	if err := pool.Ping(context.Background()); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+
 	mux := http.NewServeMux()
 	server := &PingServiceServer{db: pool}
 
@@ -109,6 +121,13 @@ func main() {
 	mux.Handle(pingv1connect.NewPingServiceHandler(server))
 
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		// Check database connection
+		err := pool.Ping(r.Context())
+		if err != nil {
+			log.Printf("Health check failed: %v", err)
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
 		w.WriteHeader(http.StatusOK)
 	})
 

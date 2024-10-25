@@ -11,10 +11,6 @@ requires:
   - configs:
     - server
     path: server/skaffold.yaml
-    dependencies:
-      - configs:
-        - ping-db-config
-        path: db/skaffold.yaml
 
 profiles:
   - name: bootstrap
