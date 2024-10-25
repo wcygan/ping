@@ -6,6 +6,9 @@ rules:
 - apiGroups: ["postgresql.cnpg.io"]
   resources: ["clusters"]
   verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["services", "pods"]
+  verbs: ["get", "watch", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -24,7 +27,7 @@ kind: Deployment
 metadata:
   name: server
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: server
@@ -34,29 +37,56 @@ spec:
         app: server
     spec:
       initContainers:
-        - name: wait-for-db
+        - name: wait-for-k8s
           image: bitnami/kubectl
           command:
             - /bin/sh
             - -c
             - |
               echo "Waiting for CNPG cluster to be ready..."
-              until kubectl get cluster pg-cluster -o jsonpath='{.status.instances}' | grep -q "3"; do
-                echo "Waiting for all instances to be created..."
+              until kubectl get cluster pg-cluster -o jsonpath='{.status.phase}' | grep -q "Cluster in healthy state"; do
+                echo "Waiting for cluster to be healthy..."
                 sleep 5
               done
               
-              until kubectl get cluster pg-cluster -o jsonpath='{.status.readyInstances}' | grep -q "3"; do
-                echo "Waiting for all instances to be ready..."
+              # Verify primary is available
+              PRIMARY_HOST="pg-cluster-rw"
+              until kubectl get svc $PRIMARY_HOST; do
+                echo "Waiting for primary service to be available..."
                 sleep 5
               done
               
-              until kubectl get cluster pg-cluster -o jsonpath='{.status.phase}' | grep -q "Running"; do
-                echo "Waiting for cluster to be in Running phase..."
+              # until kubectl get pods -l app=pg-cluster -o jsonpath='{.items[*].status.containerStatuses[*].ready}' | grep -q "true"; do
+              #   echo "Waiting for primary pod to be ready..."
+              #   sleep 5
+              # done
+              
+              echo "Kubernetes checks completed!"
+          
+        - name: wait-for-db
+          image: bitnami/postgresql
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pinguser-secret
+                  key: password
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: pinguser-secret
+                  key: username
+          command:
+            - /bin/sh
+            - -c
+            - |
+              PRIMARY_HOST="pg-cluster-rw"
+              until psql -h $PRIMARY_HOST -d pingdb -c '\l'; do
+                echo "Waiting for primary database to accept connections..."
                 sleep 5
               done
               
-              echo "CNPG cluster is ready!"
+              echo "PostgreSQL checks completed!"
         - name: migrations
           image: server
           command: ["/app/server"]

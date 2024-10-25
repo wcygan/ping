@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "New Note",
+        "type": "shell",
+        "command": "${workspaceFolder}/new-note.sh",
+        "runOptions": {
+          "runOn": "default"
+        },
+        "problemMatcher": []
+      },
+    ]
+  }
+  
