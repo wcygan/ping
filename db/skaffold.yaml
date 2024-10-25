@@ -4,6 +4,7 @@ metadata:
   name: db
 manifests:
   rawYaml:
+    - secret.yaml
     - ping-db.yaml
 deploy:
   helm:

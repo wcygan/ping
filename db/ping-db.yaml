@@ -5,4 +5,18 @@ metadata:
 spec:
   instances: 3
   storage:
-   size: 1Gi
+    size: 1Gi
+  bootstrap:
+    initdb:
+      database: pingdb
+      owner: pinguser
+      secret:
+        name: pinguser-secret
+      postInitSQL:
+        - ALTER ROLE pinguser WITH LOGIN;
+        - GRANT ALL PRIVILEGES ON DATABASE pingdb TO pinguser;
+        - CREATE TABLE pings (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            pinged_at TIMESTAMP WITH TIME ZONE
+          );
+        - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO pinguser;

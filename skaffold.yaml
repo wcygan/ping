@@ -9,5 +9,3 @@ requires:
   - configs:
       - db
     path: db/skaffold.yaml
-deploy:
-  tolerateFailuresUntilDeadline: true
