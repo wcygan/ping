@@ -20,6 +20,10 @@ deploy:
   kubectl:
     flags:
       apply: ["--namespace=kafka-system"]
+    hooks:
+      after:
+        - host:
+            command: ["kubectl", "wait", "--for=condition=Ready", "kafka", "ping-kafka-cluster", "-n", "kafka-system", "--timeout=300s"]
 manifests:
   rawYaml:
     - base/kafka-cluster.yaml
