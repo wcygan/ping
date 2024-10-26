@@ -22,7 +22,7 @@ requires:
     path: kafka/skaffold.yaml
 deploy:
   kubectl:
-    flags:
-      apply: ["--namespace=default"]
     manifests:
       - base/kafka-cluster.yaml
+    flags:
+      apply: ["--namespace=default"]
