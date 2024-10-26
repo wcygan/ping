@@ -8,9 +8,14 @@ require (
 	buf.build/gen/go/wcygan/ping/connectrpc/go v1.17.0-20241014170349-9ebcb8552d88.1
 	buf.build/gen/go/wcygan/ping/protocolbuffers/go v1.35.1-20241014170349-9ebcb8552d88.1
 	connectrpc.com/connect v1.17.0
+	github.com/Shopify/sarama v1.38.1
 )
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/eapache/go-resiliency v1.5.0 // indirect
+	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
+	github.com/eapache/queue v1.1.0 // indirect
 	github.com/golang-migrate/migrate/v4 v4.18.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect

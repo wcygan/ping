@@ -20,7 +20,8 @@ import (
 
 // PingServiceServer implements the PingService interface.
 type PingServiceServer struct {
-	db *pgxpool.Pool
+	db       *pgxpool.Pool
+	producer *kafka.Producer
 }
 
 // Ping handles the Ping RPC.
@@ -28,10 +29,29 @@ func (s *PingServiceServer) Ping(ctx context.Context, req *connect.Request[pingv
 	timestamp := time.Unix(0, req.Msg.TimestampMs*int64(time.Millisecond)).UTC()
 	log.Printf("Received a ping at %s (UTC)", timestamp.Format(time.RFC3339))
 
-	_, err := s.db.Exec(ctx, "INSERT INTO pings (pinged_at) VALUES ($1)", timestamp)
+	// Start a transaction
+	tx, err := s.db.Begin(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to begin transaction: %v", err)
+	}
+	defer tx.Rollback(ctx) // Will be no-op if committed
+
+	// Insert into PostgreSQL within transaction
+	_, err = tx.Exec(ctx, "INSERT INTO pings (pinged_at) VALUES ($1)", timestamp)
 	if err != nil {
 		log.Printf("Failed to insert ping: %v", err)
 		return nil, fmt.Errorf("failed to store ping: %v", err)
+	}
+
+	// Send to Kafka
+	if err := s.producer.SendPingEvent(ctx, timestamp); err != nil {
+		log.Printf("Failed to send to Kafka: %v", err)
+		return nil, fmt.Errorf("failed to send to Kafka: %v", err)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(ctx); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %v", err)
 	}
 
 	return connect.NewResponse(&pingv1.PingResponse{}), nil
