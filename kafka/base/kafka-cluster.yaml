@@ -6,6 +6,7 @@ metadata:
   annotations:
     strimzi.io/kraft: enabled
     strimzi.io/node-pools: enabled
+    strimzi.io/topic-operator-enabled: "true"
 spec:
   kafka:
     version: 3.7.0
