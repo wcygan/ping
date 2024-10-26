@@ -19,7 +19,7 @@ metadata:
 deploy:
   kubectl:
     flags:
-      apply: ["--namespace=default"]
+      apply: ["--namespace=kafka-system"]
 manifests:
   rawYaml:
     - base/kafka-cluster.yaml
