@@ -11,15 +11,19 @@ deploy:
         namespace: kafka-system
         createNamespace: true
         wait: true
+        waitForDependencies: true
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: kafka-config
+requires:
+  - configs:
+    - kafka-install
+    path: kafka/skaffold.yaml
 deploy:
   kubectl:
     flags:
       apply: ["--namespace=default"]
-manifests:
-  rawYaml:
-    - base/kafka-cluster.yaml
+    manifests:
+      - base/kafka-cluster.yaml

@@ -12,6 +12,7 @@ requires:
     - server
     path: server/skaffold.yaml
   - configs:
+    - kafka-install
     - kafka-config
     path: kafka/skaffold.yaml
 
@@ -24,3 +25,6 @@ profiles:
           - configs:
             - ping-db-install
             path: db/skaffold.yaml
+          - configs:
+            - kafka-install
+            path: kafka/skaffold.yaml
