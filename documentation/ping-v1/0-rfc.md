@@ -1,116 +1,115 @@
-# v1
+# v1: Learning Stream Processing
 
-`v1` for this application is all about adding stream processing.
+`v1` introduces stream processing through a series of educational modules, each building on the previous one to create a real-time ping visualization system.
 
 ## Abstract
 
-This RFC proposes adding stream processing capabilities to the existing ping service using Kafka, Flink, and ScyllaDB. The initial implementation will focus on basic real-time metrics processing.
+This RFC proposes adding stream processing capabilities to the ping service in an educational, step-by-step manner. The end goal is to create a real-time ping heatmap showing usage patterns, while teaching core streaming concepts.
 
 ## Background
 
-The current system stores ping events in PostgreSQL. While this works for basic storage and querying, adding stream processing will enable real-time analytics and metrics.
+The current system stores ping events in PostgreSQL. While this works for basic storage, we'll extend it to handle real-time processing through a series of learning modules.
+
+## Learning Modules
+
+### Module 1: Kafka Basics
+- Deploy Kafka using Strimzi operator
+- Modify server to write to both PostgreSQL and Kafka
+- Build simple console consumer
+- **Learning Outcomes**: Kafka basics, operators, event patterns
+
+### Module 2: Stream Processing with Flink
+- Deploy Flink on Kubernetes
+- Create basic processing job
+- Calculate ping frequency per minute
+- **Learning Outcomes**: Stream processing fundamentals
+
+### Module 3: Data Visualization
+- Deploy ScyllaDB for time-series storage
+- Store processed metrics
+- Create real-time heatmap visualization
+- **Learning Outcomes**: Time-series data, NoSQL concepts
 
 ## High-Level Design
 
 ### Current Architecture
-
 ```plaintext
 Client → Server → PostgreSQL
 ```
 
-### Proposed Architecture
-
+### Final Architecture
 ```plaintext
 Client → Server → PostgreSQL
-              ↘ Kafka → Flink → ScyllaDB
+              ↘ Kafka → Flink → ScyllaDB → Heatmap UI
 ```
 
-## Components
-
-- **Kafka**: Message broker for ping events
-- **Flink**: Stream processing for real-time metrics
-- **ScyllaDB**: Storage for processed metrics
-
-## Metrics (Initial Phase)
-
-- **Ping count per client in 5-minute windows**
-- **Average ping frequency**
-- **Rolling 24-hour activity summary**
-
-## Implementation Phases
+## Implementation Plan
 
 ### Phase 1: Kafka Integration
 
-#### Setup
+#### Module 1 Implementation
 
-- Deploy Kafka using Strimzi operator
-- Create `raw-pings` topic
-- Configure monitoring (Kafka UI)
+1. **Kafka Setup**
+   - Deploy Strimzi operator
+   - Create `ping-events` topic
+   - Setup basic monitoring
 
-#### Server Changes
+2. **Server Changes**
+   - Add Kafka producer
+   - Implement dual-write pattern
+   - Add basic health checks
 
-- Add Kafka producer
-- Modify transaction handling
-- Add health checks
+3. **Learning Exercises**
+   - Build console consumer
+   - Experiment with partitions
+   - Monitor event flow
 
-#### Validation
+#### Module 2 Implementation
 
-- Test event production
-- Verify transaction atomicity
-- Check monitoring
+1. **Flink Setup**
+   - Deploy Flink operator
+   - Create basic job template
+   - Setup monitoring
 
-### Phase 2: ScyllaDB Setup
+2. **Processing Logic**
+   - Calculate events per minute
+   - Implement sliding windows
+   - Output to Kafka topic
 
-#### Setup
+3. **Learning Exercises**
+   - Modify window sizes
+   - Add simple aggregations
+   - Monitor processing lag
 
-- Deploy ScyllaDB operator
-- Create `metrics` keyspace
-- Configure monitoring
+#### Module 3 Implementation
 
-#### Schema Creation
+1. **ScyllaDB Setup**
+   - Deploy operator
+   - Create time-series schema
+   - Configure retention
 
-- Create tables for metrics
-- Set up retention policies
-- Create necessary indices
+2. **Visualization**
+   - Store processed metrics
+   - Create basic UI
+   - Display heatmap
 
-#### Validation
+3. **Learning Exercises**
+   - Query patterns
+   - Data retention
+   - UI interactions
 
-- Test connections
-- Verify data model
-- Check monitoring
+## Technical Details
 
-### Phase 3: Flink Processing
-
-#### Setup
-
-- Deploy Flink operator
-- Configure checkpointing
-- Set up monitoring
-
-#### Implementation
-
-- Create processing job
-- Configure Kafka source
-- Configure ScyllaDB sink
-
-#### Validation
-
-- Test processing pipeline
-- Verify metrics accuracy
-- Check monitoring
-
-## Detailed Implementation
-
-### Kafka Topic Configuration
+### Kafka Configuration
 
 ```yaml
 topics:
-    - name: raw-pings
-        partitions: 6
-        replication-factor: 3
-        configs:
-            retention.ms: 604800000  # 7 days
-            cleanup.policy: delete
+    - name: ping-events
+      partitions: 3
+      replication-factor: 3
+      configs:
+        retention.ms: 86400000  # 24 hours
+        cleanup.policy: delete
 ```
 
 ### ScyllaDB Schema
@@ -119,145 +118,92 @@ topics:
 CREATE KEYSPACE IF NOT EXISTS metrics
 WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': 3};
 
-CREATE TABLE metrics.window_stats (
-        client_ip text,
-        window_start timestamp,
-        window_end timestamp,
-        ping_count int,
-        avg_interval_ms double,
-        PRIMARY KEY ((client_ip), window_start)
-) WITH CLUSTERING ORDER BY (window_start DESC);
-
-CREATE TABLE metrics.daily_stats (
-        client_ip text,
-        day date,
-        total_pings counter,
-        PRIMARY KEY ((client_ip), day)
-) WITH CLUSTERING ORDER BY (day DESC);
+CREATE TABLE metrics.heatmap_data (
+    time_bucket timestamp,
+    minute int,
+    hour int,
+    ping_count int,
+    PRIMARY KEY ((hour), minute, time_bucket)
+) WITH CLUSTERING ORDER BY (minute ASC, time_bucket DESC);
 ```
 
-### Server Implementation
+### Example Implementations
+
+#### Basic Server with Kafka
 
 ```go
 func (s *PingServiceServer) Ping(ctx context.Context, req *connect.Request[pingv1.PingRequest]) (*connect.Response[pingv1.PingResponse], error) {
-        timestamp := time.Unix(0, req.Msg.TimestampMs*int64(time.Millisecond)).UTC()
-        clientIP := getClientIP(ctx)
-
-        // Start transaction
-        tx, err := s.db.Begin(ctx)
-        if (err != nil) {
-                return nil, fmt.Errorf("failed to begin transaction: %v", err)
-        }
-        defer tx.Rollback(ctx)
-        
-        // Store in PostgreSQL
-        _, err = tx.Exec(ctx, "INSERT INTO pings (pinged_at) VALUES ($1)", timestamp)
-        if (err != nil) {
-                return nil, fmt.Errorf("failed to store ping: %v", err)
-        }
-        
-        // Prepare Kafka message
-        event := PingEvent{
-                ClientIP:  clientIP,
-                Timestamp: timestamp,
-        }
-        
-        eventBytes, err := json.Marshal(event)
-        if (err != nil) {
-                return nil, fmt.Errorf("failed to marshal event: %v", err)
-        }
-        
-        // Send to Kafka - if this fails, transaction will be rolled back
-        err = s.kafkaWriter.WriteMessages(ctx, kafka.Message{
-                Key:   []byte(clientIP),
-                Value: eventBytes,
-        })
-        if (err != nil) {
-                return nil, fmt.Errorf("failed to publish event: %v", err)
-        }
-        
-        // Commit transaction only if Kafka write succeeded
-        if (err := tx.Commit(ctx); err != nil) {
-                return nil, fmt.Errorf("failed to commit transaction: %v", err)
-        }
-        
-        return connect.NewResponse(&pingv1.PingResponse{}), nil
+    timestamp := time.Unix(0, req.Msg.TimestampMs*int64(time.Millisecond)).UTC()
+    
+    // Store in PostgreSQL
+    if err := s.storeInPostgres(ctx, timestamp); err != nil {
+        return nil, err
+    }
+    
+    // Send to Kafka
+    if err := s.sendToKafka(ctx, timestamp); err != nil {
+        // Log error but don't fail request
+        log.Printf("kafka publish failed: %v", err)
+    }
+    
+    return connect.NewResponse(&pingv1.PingResponse{}), nil
 }
 ```
 
-### Flink Job
+#### Simple Flink Job
 
 ```java
-public class PingMetricsJob {
-        public static void main(String[] args) throws Exception {
-                StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+public class PingHeatmapJob {
+    public static void main(String[] args) throws Exception {
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-                // Configure Kafka source
-                Properties properties = new Properties();
-                properties.setProperty("bootstrap.servers", "kafka:9092");
-                properties.setProperty("group.id", "ping-metrics");
-                
-                FlinkKafkaConsumer<PingEvent> kafkaSource = new FlinkKafkaConsumer<>(
-                        "raw-pings",
-                        new JSONDeserializationSchema<PingEvent>(),
-                        properties
-                );
-                
-                // Process 5-minute windows
-                DataStream<WindowedMetrics> windowedMetrics = env
-                        .addSource(kafkaSource)
-                        .keyBy(event -> event.getClientIP())
-                        .timeWindow(Time.minutes(5))
-                        .aggregate(new PingMetricsAggregator());
-                
-                // Store in ScyllaDB
-                CassandraSink.addSink(windowedMetrics)
-                        .setHost("scylla")
-                        .setQuery("INSERT INTO metrics.window_stats (client_ip, window_start, window_end, ping_count, avg_interval_ms) VALUES (?, ?, ?, ?, ?)")
-                        .build();
-                
-                env.execute("Ping Metrics");
-        }
+        // Read from Kafka
+        DataStream<PingEvent> events = env.addSource(
+            new FlinkKafkaConsumer<>("ping-events", new JSONDeserializationSchema(), properties)
+        );
+        
+        // Count pings per minute
+        DataStream<MinuteCount> counts = events
+            .keyBy(event -> event.getMinute())
+            .timeWindow(Time.minutes(1))
+            .aggregate(new CountAggregator());
+            
+        // Output results
+        counts.addSink(new KafkaSink<>("ping-metrics"));
+        
+        env.execute("Ping Heatmap");
+    }
 }
 ```
 
-### Operational Notes
+### Learning Resources
 
-#### Kafka Topic Inspection
+1. **Kafka Basics**
+   - Kafka architecture
+   - Topics and partitions
+   - Producer/Consumer patterns
 
-```bash
-# List topics
-kubectl exec -it kafka-0 -- kafka-topics.sh --list --bootstrap-server localhost:9092
+2. **Stream Processing**
+   - Windows and watermarks
+   - State management
+   - Exactly-once processing
 
-# View topic details
-kubectl exec -it kafka-0 -- kafka-topics.sh --describe --topic raw-pings --bootstrap-server localhost:9092
+3. **Time Series Data**
+   - Data modeling
+   - Efficient queries
+   - Visualization techniques
 
-# Monitor consumer group
-kubectl exec -it kafka-0 -- kafka-consumer-groups.sh --describe --group ping-metrics --bootstrap-server localhost:9092
+### Development Workflow
 
-# Read messages from topic
-kubectl exec -it kafka-0 -- kafka-console-consumer.sh \
-        --bootstrap-server localhost:9092 \
-        --topic raw-pings \
-        --from-beginning \
-        --property print.timestamp=true
-```
-
-#### Health Checks
-
-- **Kafka**: `kubectl exec kafka-0 -- kafka-broker-api-versions.sh --bootstrap-server localhost:9092`
-- **ScyllaDB**: `kubectl exec scylla-0 -- nodetool status`
-- **Flink**: Check Flink dashboard (port-forward to 8081)
-
-### Risks and Mitigations
-
-- **Data Loss**: Use proper replication factors and transaction handling
-- **Performance**: Monitor and tune Kafka partitions and Flink parallelism
-- **Storage**: Implement proper retention policies in both Kafka and ScyllaDB
+1. Start with local development
+2. Move to Kubernetes gradually
+3. Focus on one concept at a time
+4. Include plenty of monitoring
 
 ### Dependencies
 
-- Strimzi Kafka Operator
-- Flink Kubernetes Operator
-- ScyllaDB Operator
-- Prometheus & Grafana for monitoring
+- Kubernetes cluster
+- Strimzi operator
+- Flink operator
+- ScyllaDB operator
+- Basic monitoring stack
