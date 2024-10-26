@@ -135,8 +135,18 @@ func main() {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
+	// Initialize Kafka producer
+	producer, err := kafka.NewProducer([]string{"ping-kafka-cluster-kafka-bootstrap.kafka-system.svc:9092"})
+	if err != nil {
+		log.Fatalf("Failed to create Kafka producer: %v", err)
+	}
+	defer producer.Close()
+
 	mux := http.NewServeMux()
-	server := &PingServiceServer{db: pool}
+	server := &PingServiceServer{
+		db:       pool,
+		producer: producer,
+	}
 
 	// Register the PingService with the Connect server.
 	mux.Handle(pingv1connect.NewPingServiceHandler(server))
