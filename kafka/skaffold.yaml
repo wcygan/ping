@@ -1,0 +1,25 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: kafka-install
+deploy:
+  helm:
+    releases:
+      - name: strimzi
+        repo: https://strimzi.io/charts/
+        remoteChart: strimzi-kafka-operator
+        namespace: kafka-system
+        createNamespace: true
+        wait: true
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: kafka-config
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=default"]
+manifests:
+  rawYaml:
+    - base/kafka-cluster.yaml

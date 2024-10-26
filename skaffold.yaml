@@ -11,6 +11,9 @@ requires:
   - configs:
     - server
     path: server/skaffold.yaml
+  - configs:
+    - kafka-config
+    path: kafka/skaffold.yaml
 
 profiles:
   - name: bootstrap
