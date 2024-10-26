@@ -1,0 +1,13 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: ping-events
+  namespace: kafka-system
+  labels:
+    strimzi.io/cluster: ping-kafka-cluster
+spec:
+  partitions: 3
+  replicas: 3
+  config:
+    retention.ms: 86400000  # 24 hours
+    cleanup.policy: delete

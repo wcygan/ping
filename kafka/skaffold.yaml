@@ -23,3 +23,4 @@ deploy:
 manifests:
   rawYaml:
     - base/kafka-cluster.yaml
+    - base/ping-events-topic.yaml
