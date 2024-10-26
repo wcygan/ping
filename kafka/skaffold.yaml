@@ -22,7 +22,8 @@ requires:
     path: kafka/skaffold.yaml
 deploy:
   kubectl:
-    manifests:
-      - base/kafka-cluster.yaml
     flags:
       apply: ["--namespace=default"]
+manifests:
+  rawYaml:
+    - base/kafka-cluster.yaml
