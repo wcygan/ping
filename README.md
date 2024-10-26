@@ -6,38 +6,88 @@ The application consists of a client and a server. The client sends a request to
 
 ## Quickstart
 
-Create a cluster & run the application:
+### Starting the Application
+
+If you haven't already, start Minikube:
 
 ```bash
 minikube start
+```
+
+Install the Kafka and Postgres operators:
+
+```bash
 skaffold run -p bootstrap
+```
+
+Next, start the remainder of the application:
+
+```bash
 skaffold dev
 ```
 
-Send a request:
+Wait for this to complete. The most important pieces will look like this:
 
-**Ping**:
+```bash
+kubectl get pods --all-namespaces
+NAMESPACE      NAME                                                  READY   STATUS    RESTARTS       AGE
+cnpg-system    cnpg-cloudnative-pg-5fd4d75b76-fk5d4                1/1     Running   0              98m
+default        pg-cluster-1                                         1/1     Running   0              50m
+default        pg-cluster-2                                         1/1     Running   0              50m
+default        pg-cluster-3                                         1/1     Running   0              50m
+default        server-6749f574f5-4q48x                             1/1     Running   0              37m
+default        server-6749f574f5-bk66j                             1/1     Running   0              38m
+default        server-6749f574f5-rs98s                             1/1     Running   0              38m
+kafka-system   ping-kafka-cluster-entity-operator-7fd7475488-2ccvp  2/2     Running   0              51m
+kafka-system   ping-kafka-cluster-ping-kafka-cluster-pool-0         1/1     Running   0              51m
+kafka-system   ping-kafka-cluster-ping-kafka-cluster-pool-1         1/1     Running   0              51m
+kafka-system   ping-kafka-cluster-ping-kafka-cluster-pool-2         1/1     Running   0              51m
+kafka-system   strimzi-cluster-operator-7c54996bb7-z5kwn           1/1     Running   0              98m
+```
 
+### Interacting with the Application
+
+#### Using curl
+
+Send a ping:
 ```bash
 curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
      -H "Content-Type: application/json" \
      -d '{"timestamp_ms": 1728926331000}'
 ```
 
-**Ping Count**:
-
+Get ping count:
 ```bash
 curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
      -H "Content-Type: application/json" \
      -d '{}'
 ```
 
-**Ping Count (with Time Range)**:
+#### Using the Go client
 
 ```bash
-curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
-     -H "Content-Type: application/json" \
-     -d '{"start_timestamp_ms": 1728926331000, "end_timestamp_ms": 1728926332000}'
+go run . ping
+go run . count
+```
+
+#### Monitoring Kafka Events
+
+View events in the Kafka topic:
+```bash
+kubectl exec -it ping-kafka-cluster-ping-kafka-cluster-pool-0 -n kafka-system -- \
+  bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic ping-events --from-beginning
+```
+
+#### Checking PostgreSQL Data
+
+View the first 10 pings:
+```bash
+kubectl cnpg psql pg-cluster -- -d pingdb -c "SELECT * FROM pings LIMIT 10;"
+```
+
+Count total pings:
+```bash
+kubectl cnpg psql pg-cluster -- -d pingdb -c "SELECT COUNT (*) FROM pings"
 ```
 
 ### Clean up
