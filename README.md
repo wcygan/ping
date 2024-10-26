@@ -10,6 +10,7 @@ Create a cluster & run the application:
 
 ```bash
 minikube start
+skaffold run -p bootstrap
 skaffold dev
 ```
 
@@ -19,6 +20,15 @@ Send a request:
 curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
      -H "Content-Type: application/json" \
      -d '{"timestamp_ms": 1728926331000}'
+```
+
+### Clean up
+
+Use `CTRL+C` to stop `skaffold dev`, then run:
+
+```bash
+skaffold delete -p bootstrap
+minikube stop
 ```
 
 ## Tech Stack
