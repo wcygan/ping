@@ -2,6 +2,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: ping-kafka-cluster
+  namespace: default
   annotations:
     strimzi.io/kraft: enabled
     strimzi.io/node-pools: enabled
@@ -25,6 +26,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
 metadata:
   name: ping-kafka-cluster-pool
+  namespace: default
   labels:
     strimzi.io/cluster: ping-kafka-cluster
 spec:
