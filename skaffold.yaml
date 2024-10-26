@@ -5,15 +5,15 @@ metadata:
 
 # Default configuration
 requires:
+  - configs:
+    - kafka-config
+    path: kafka/skaffold.yaml
   - configs: 
     - ping-db-config
     path: db/skaffold.yaml
   - configs:
     - server
     path: server/skaffold.yaml
-  - configs:
-    - kafka-config
-    path: kafka/skaffold.yaml
 
 profiles:
   - name: bootstrap
