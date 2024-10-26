@@ -2,51 +2,49 @@ package service
 
 import (
     "context"
-    "fmt"
     "time"
-    "github.com/jackc/pgx/v5/pgxpool"
-    "github.com/wcygan/ping/server/kafka"
+    "github.com/wcygan/ping/server/errors"
+    "go.uber.org/zap"
 )
 
 type PingService struct {
-    db       *pgxpool.Pool
-    producer *kafka.Producer
+    repo      PingRepository
+    producer  EventProducer
+    logger    *zap.Logger
 }
 
-func NewPingService(db *pgxpool.Pool, producer *kafka.Producer) *PingService {
+func NewPingService(repo PingRepository, producer EventProducer, logger *zap.Logger) *PingService {
     return &PingService{
-        db:       db,
-        producer: producer,
+        repo:      repo,
+        producer:  producer,
+        logger:    logger,
     }
 }
 
 func (s *PingService) RecordPing(ctx context.Context, timestamp time.Time) error {
-    tx, err := s.db.Begin(ctx)
-    if err != nil {
-        return fmt.Errorf("failed to begin transaction: %v", err)
-    }
-    defer tx.Rollback(ctx)
-
-    if _, err := tx.Exec(ctx, "INSERT INTO pings (pinged_at) VALUES ($1)", timestamp); err != nil {
-        return fmt.Errorf("failed to store ping: %v", err)
+    if err := s.repo.StorePing(ctx, timestamp); err != nil {
+        s.logger.Error("failed to store ping", zap.Error(err))
+        return &errors.StorageError{Err: err}
     }
 
     if err := s.producer.SendPingEvent(ctx, timestamp); err != nil {
-        return fmt.Errorf("failed to send to Kafka: %v", err)
+        s.logger.Error("failed to send event", zap.Error(err))
+        return &errors.KafkaError{Err: err}
     }
 
-    if err := tx.Commit(ctx); err != nil {
-        return fmt.Errorf("failed to commit transaction: %v", err)
-    }
-
+    s.logger.Info("ping recorded successfully", 
+        zap.Time("timestamp", timestamp))
     return nil
 }
 
 func (s *PingService) GetPingCount(ctx context.Context) (int64, error) {
-    var count int64
-    err := s.db.QueryRow(ctx, "SELECT COUNT(*) FROM pings").Scan(&count)
+    count, err := s.repo.CountPings(ctx)
     if err != nil {
-        return 0, fmt.Errorf("failed to count pings: %v", err)
+        s.logger.Error("failed to count pings", zap.Error(err))
+        return 0, &errors.StorageError{Err: err}
     }
+    
+    s.logger.Info("ping count retrieved", 
+        zap.Int64("count", count))
     return count, nil
 }

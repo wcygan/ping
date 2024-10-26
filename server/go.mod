@@ -40,4 +40,5 @@ require (
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
+	go.uber.org/zap v1.27.0
 )
