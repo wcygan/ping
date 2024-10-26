@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -19,7 +20,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-
 func runMigrations(dbURL string) error {
 	m, err := migrate.New(
 		"file://migrations",
@@ -29,7 +29,7 @@ func runMigrations(dbURL string) error {
 		return fmt.Errorf("failed to create migrate instance: %v", err)
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("failed to run migrations: %v", err)
 	}
 
