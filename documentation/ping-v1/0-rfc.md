@@ -48,6 +48,30 @@ Client → Server → PostgreSQL
               ↘ Kafka → Flink → ScyllaDB → Heatmap UI
 ```
 
+```mermaid
+flowchart LR
+    Client([Client])
+    Server[Server]
+    PG[(PostgreSQL)]
+    Kafka[Apache Kafka]
+    Flink[Apache Flink]
+    Scylla[(ScyllaDB)]
+    
+    Client --> Server
+    Server --> PG
+    Server --> Kafka
+    Kafka --> Flink
+    Flink --> Scylla
+    
+    classDef database fill:#f5f5f5,stroke:#333,stroke-width:2px
+    classDef processing fill:#e1f5fe,stroke:#333,stroke-width:2px
+    classDef client fill:#f5f5f5,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    
+    class PG,Scylla database
+    class Kafka,Flink processing
+    class Client client
+```
+
 ## Implementation Plan
 
 ### Phase 1: Kafka Integration
