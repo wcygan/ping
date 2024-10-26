@@ -12,7 +12,6 @@ requires:
     - server
     path: server/skaffold.yaml
   - configs:
-    - kafka-install
     - kafka-config
     path: kafka/skaffold.yaml
 

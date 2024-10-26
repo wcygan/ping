@@ -16,10 +16,6 @@ apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: kafka-config
-requires:
-  - configs:
-    - kafka-install
-    path: kafka/skaffold.yaml
 deploy:
   kubectl:
     flags:
