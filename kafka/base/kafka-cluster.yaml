@@ -15,11 +15,16 @@ spec:
       transaction.state.log.min.isr: 2
       default.replication.factor: 3
       min.insync.replicas: 2
+      inter.broker.protocol.version: "3.6"
       metadata.version: "3.6-IV2"
     listeners:
       - name: plain
         port: 9092
         type: internal
+        tls: false
+      - name: external
+        port: 9093
+        type: nodeport
         tls: false
 ---
 apiVersion: kafka.strimzi.io/v1beta2
