@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/wcygan/ping/server/kafka"
 	"log"
 	"net/http"
 	"os"
