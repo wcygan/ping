@@ -5,13 +5,15 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/wcygan/ping/server/config"
 	"github.com/wcygan/ping/server/handler"
 	"github.com/wcygan/ping/server/kafka"
+	"github.com/wcygan/ping/server/logger"
+	"github.com/wcygan/ping/server/repository"
 	"github.com/wcygan/ping/server/service"
+	"go.uber.org/zap"
 
 	"buf.build/gen/go/wcygan/ping/connectrpc/go/ping/v1/pingv1connect"
 	"github.com/golang-migrate/migrate/v4"
@@ -46,9 +48,9 @@ func main() {
 
 	if *migrateOnly {
 		if err := runMigrations(dbURL); err != nil {
-			log.Fatalf("Failed to run migrations: %v", err)
+			log.Fatal("Failed to run migrations", zap.Error(err))
 		}
-		log.Println("Migrations completed successfully")
+		log.Info("Migrations completed successfully")
 		return
 	}
 
@@ -69,13 +71,20 @@ func main() {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
+	// Initialize logger
+	logger.Init()
+	log := logger.Get()
+
 	producer, err := kafka.NewProducer(cfg.KafkaBrokers)
 	if err != nil {
-		log.Fatalf("Failed to create Kafka producer: %v", err)
+		log.Fatal("Failed to create Kafka producer", zap.Error(err))
 	}
 	defer producer.Close()
 
-	pingService := service.NewPingService(pool, producer)
+	// Create repository
+	repo := repository.NewPingRepository(pool)
+
+	pingService := service.NewPingService(repo, producer, log)
 	pingHandler := handler.NewPingServiceHandler(pingService)
 
 	mux := http.NewServeMux()
@@ -85,14 +94,14 @@ func main() {
 		// Check database connection
 		err := pool.Ping(r.Context())
 		if err != nil {
-			log.Printf("Health check failed: %v", err)
+			log.Error("Health check failed", zap.Error(err))
 			w.WriteHeader(http.StatusServiceUnavailable)
 			return
 		}
 		w.WriteHeader(http.StatusOK)
 	})
 
-	log.Println("Starting server on :8080")
+	log.Info("Starting server on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("failed to start server: %v", err)
 	}
