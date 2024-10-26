@@ -46,6 +46,10 @@ func main() {
 	dbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
 		cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBName)
 
+	// Initialize logger
+	logger.Init()
+	log := logger.Get()
+
 	if *migrateOnly {
 		if err := runMigrations(dbURL); err != nil {
 			log.Fatal("Failed to run migrations", zap.Error(err))
@@ -57,23 +61,19 @@ func main() {
 	// Connect to the database
 	poolConfig, err := pgxpool.ParseConfig(dbURL)
 	if err != nil {
-		log.Fatalf("Failed to parse database config: %v", err)
+		log.Fatal("Failed to parse database config", zap.Error(err))
 	}
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
 	if err != nil {
-		log.Fatalf("Failed to create connection pool: %v", err)
+		log.Fatal("Failed to create connection pool: %v", zap.Error(err))
 	}
 	defer pool.Close()
 
 	// Test the connection
 	if err := pool.Ping(context.Background()); err != nil {
-		log.Fatalf("Failed to ping database: %v", err)
+		log.Fatal("Failed to ping database: %v", zap.Error(err))
 	}
-
-	// Initialize logger
-	logger.Init()
-	log := logger.Get()
 
 	producer, err := kafka.NewProducer(cfg.KafkaBrokers)
 	if err != nil {
@@ -103,6 +103,6 @@ func main() {
 
 	log.Info("Starting server on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
-		log.Fatalf("failed to start server: %v", err)
+		log.Fatal("failed to start server: %v", zap.Error(err))
 	}
 }
