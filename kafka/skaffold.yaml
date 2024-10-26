@@ -11,7 +11,6 @@ deploy:
         namespace: kafka-system
         createNamespace: true
         wait: true
-        waitForDependencies: true
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
