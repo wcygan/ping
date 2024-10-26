@@ -13,18 +13,21 @@ The current system stores ping events in PostgreSQL. While this works for basic 
 ## Learning Modules
 
 ### Module 1: Kafka Basics
+
 - Deploy Kafka using Strimzi operator
 - Modify server to write to both PostgreSQL and Kafka
 - Build simple console consumer
 - **Learning Outcomes**: Kafka basics, operators, event patterns
 
 ### Module 2: Stream Processing with Flink
+
 - Deploy Flink on Kubernetes
 - Create basic processing job
 - Calculate ping frequency per minute
 - **Learning Outcomes**: Stream processing fundamentals
 
 ### Module 3: Data Visualization
+
 - Deploy ScyllaDB for time-series storage
 - Store processed metrics
 - Create real-time heatmap visualization
@@ -33,11 +36,13 @@ The current system stores ping events in PostgreSQL. While this works for basic 
 ## High-Level Design
 
 ### Current Architecture
+
 ```plaintext
 Client → Server → PostgreSQL
 ```
 
 ### Final Architecture
+
 ```plaintext
 Client → Server → PostgreSQL
               ↘ Kafka → Flink → ScyllaDB → Heatmap UI

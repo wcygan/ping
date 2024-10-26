@@ -15,7 +15,6 @@ spec:
       transaction.state.log.min.isr: 2
       default.replication.factor: 3
       min.insync.replicas: 2
-      inter.broker.protocol.version: "3.7"
       metadata.version: "3.7"
     listeners:
       - name: plain
