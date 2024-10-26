@@ -16,10 +16,28 @@ skaffold dev
 
 Send a request:
 
+**Ping**:
+
 ```bash
 curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
      -H "Content-Type: application/json" \
      -d '{"timestamp_ms": 1728926331000}'
+```
+
+**Ping Count**:
+
+```bash
+curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
+     -H "Content-Type: application/json" \
+     -d '{}'
+```
+
+**Ping Count (with Time Range)**:
+
+```bash
+curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
+     -H "Content-Type: application/json" \
+     -d '{"start_timestamp_ms": 1728926331000, "end_timestamp_ms": 1728926332000}'
 ```
 
 ### Clean up

@@ -18,7 +18,7 @@ message PingRequest {
 }
 
 // PingResponse is the response message for the Ping RPC.
-message PingResponse {}
+message PingResponse {}1
 
 // TimeRange defines a range of time with a start and end timestamp.
 message TimeRange {

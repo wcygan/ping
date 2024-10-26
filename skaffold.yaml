@@ -16,6 +16,8 @@ profiles:
   - name: bootstrap
     patches:
       - op: replace
-        path: /requires/0/configs
-        value: 
-          - ping-db-install
+        path: /requires
+        value:
+          - configs:
+            - ping-db-install
+            path: db/skaffold.yaml
