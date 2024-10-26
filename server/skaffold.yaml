@@ -19,5 +19,6 @@ deploy:
 portForward:
   - resourceType: service
     resourceName: server
+    namespace: default
     port: 8080
     localPort: 8080
