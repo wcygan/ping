@@ -2,9 +2,22 @@ apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: ping-application
+
+# Default configuration
 requires:
+  - configs: 
+    - ping-db-config
+    path: db/skaffold.yaml
   - configs:
-      - server
+    - server
     path: server/skaffold.yaml
-deploy:
-  tolerateFailuresUntilDeadline: true
+
+profiles:
+  - name: bootstrap
+    patches:
+      - op: replace
+        path: /requires
+        value:
+          - configs:
+            - ping-db-install
+            path: db/skaffold.yaml
