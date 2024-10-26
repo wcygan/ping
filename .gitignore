@@ -1,3 +1,5 @@
 .idea
 **/generated/**
 **/gen/**
+.aider*
+.env
