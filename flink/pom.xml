@@ -23,6 +23,11 @@
             <artifactId>flink-connector-kafka</artifactId>
             <version>${flink.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-cassandra_2.12</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
