@@ -5,8 +5,8 @@ metadata:
 build:
   artifacts:
   - image: ping-processor
-    docker:
-      dockerfile: Dockerfile
+    jib:
+      project: com.ping:ping-processor
 deploy:
   kubectl:
     manifests:

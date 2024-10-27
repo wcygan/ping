@@ -36,4 +36,26 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <from>
+                        <image>flink:1.17.1</image>
+                    </from>
+                    <to>
+                        <image>ping-processor</image>
+                    </to>
+                    <container>
+                        <mainClass>com.ping.PingStreamProcessor</mainClass>
+                        <appRoot>/opt/flink/usrlib</appRoot>
+                    </container>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
