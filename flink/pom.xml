@@ -38,11 +38,11 @@
             <version>${flink.version}</version>
         </dependency>
         
-        <!-- JSON Processing -->
+        <!-- Protocol Buffers -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
+            <groupId>build.buf.gen</groupId>
+            <artifactId>wcygan_ping_protocolbuffers_java</artifactId>
+            <version>28.3.0.1.20241014170349.9ebcb8552d88</version>
         </dependency>
 
         <!-- Test Dependencies -->
