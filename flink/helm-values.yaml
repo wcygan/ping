@@ -1,0 +1,30 @@
+# Default values for flink-kubernetes-operator
+operator:
+  image:
+    repository: apache/flink-kubernetes-operator
+    tag: 1.9.0
+  watchNamespaces: ["default"]  # namespace(s) to watch for Flink deployments
+
+webhook:
+  create: true
+  
+# Default configuration for Flink deployments
+defaultConfiguration:
+  create: true
+  # High availability configuration
+  high-availability: org.apache.flink.kubernetes.highavailability.KubernetesHaServicesFactory
+  # Metrics configuration  
+  metrics.reporters: prometheus
+  metrics.reporter.prometheus.class: org.apache.flink.metrics.prometheus.PrometheusReporter
+  # Logging configuration
+  kubernetes.operator.metrics.reporter.slf4j.factory.class: org.apache.flink.metrics.slf4j.Slf4jReporterFactory
+
+rbac:
+  create: true
+  serviceAccount:
+    create: true
+    name: flink-operator
+
+# Prometheus ServiceMonitor
+serviceMonitor:
+  enabled: true

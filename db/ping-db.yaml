@@ -3,7 +3,7 @@ kind: Cluster
 metadata:
   name: pg-cluster
 spec:
-  instances: 3
+  instances: 1 # TODO: Change to 3 after development
   storage:
     size: 1Gi
   bootstrap:

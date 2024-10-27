@@ -3,3 +3,5 @@
 **/gen/**
 .aider*
 .env
+target/
+**/**dependency-reduced-pom.xml

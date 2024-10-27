@@ -1,0 +1,38 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: flink-config
+build:
+  artifacts:
+    - image: ping-processor
+      context: .
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/main/java/**/*.java"
+            dest: /opt/flink/usrlib
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=default"]
+manifests:
+  rawYaml:
+    - base/rbac.yaml
+    - base/flinkdeployment.yaml
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: flink-operator-install
+deploy:
+  helm:
+    releases:
+      - name: flink-kubernetes-operator
+        repo: https://archive.apache.org/dist/flink/flink-kubernetes-operator-1.9.0
+        remoteChart: flink-kubernetes-operator
+        namespace: flink-operator
+        createNamespace: true
+        wait: true
+        setValues:
+          webhook.create: false

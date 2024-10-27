@@ -6,9 +6,9 @@ metadata:
   labels:
     strimzi.io/cluster: ping-kafka-cluster
 spec:
-  partitions: 3
-  replicas: 3
+  partitions: 1 # TODO: Change to 3 after development
+  replicas: 1 # TODO: Change to 3 after development
   config:
     retention.ms: 86400000  # 24 hours
     cleanup.policy: delete
-    min.insync.replicas: 2
+    min.insync.replicas: 1 # TODO: Change to 2 after development
