@@ -5,22 +5,10 @@ metadata:
 build:
   artifacts:
     - image: server
-      ko:
-        fromImage: cgr.dev/chainguard/static:latest
-        labels:
-          org.opencontainers.image.source: "https://github.com/wcygan/ping"
-        dependencies:
-          paths:
-            - "**/*.go"
-            - "go.mod"
-            - "go.sum"
-          ignore:
-            - "**/testdata/**"
-        ldflags:
-          - "-s"
-          - "-w"
-  platforms: ["linux/amd64"]
-  local: {}
+      docker:
+        dockerfile: Dockerfile
+  local:
+    push: false
 manifests:
   rawYaml:
     - server.yaml
