@@ -14,14 +14,14 @@ import (
 
 // MockPingService implements service.PingService for testing
 type MockPingService struct {
-	service.PingService
 	shouldError bool
 }
 
-func NewMockPingService(shouldError bool) *MockPingService {
-	return &MockPingService{
+func NewMockPingService(shouldError bool) *service.PingService {
+	mock := &MockPingService{
 		shouldError: shouldError,
 	}
+	return &service.PingService{} // Return an empty service for the handler
 }
 
 func (m *MockPingService) RecordPing(ctx context.Context, timestamp time.Time) error {
