@@ -1,5 +1,13 @@
 # ConnectRPC, Buf, and Kubernetes Setup Guide
 
+## Prerequisites
+
+- Go 1.22+
+- Docker
+- kubectl
+- skaffold
+- buf CLI
+
 ## 1. Protocol Buffer Definition
 The service is defined in `proto/ping/v1/ping.proto`:
 ```protobuf
@@ -115,8 +123,75 @@ spec:
   - Service discovery
   - Horizontal Pod Autoscaling
 
+## Service Dependencies
+
+### PostgreSQL
+- Managed by CloudNativePG operator
+- Automatic failover and high availability
+- Credentials managed via Kubernetes secrets
+
+### Kafka
+- Used for event streaming
+- Topics:
+  - ping-events: Records all ping events
+- Managed by Strimzi operator
+
+## Local Development Setup
+
+1. Start local dependencies:
+```bash
+# Start PostgreSQL
+docker run -d --name postgres \
+  -e POSTGRES_USER=pinguser \
+  -e POSTGRES_PASSWORD=ping123 \
+  -e POSTGRES_DB=pingdb \
+  -p 5432:5432 \
+  postgres:15
+
+# Start Kafka
+docker run -d --name kafka \
+  -p 9092:9092 \
+  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+  bitnami/kafka:latest
+```
+
+2. Run database migrations:
+```bash
+cd server
+go run main.go -migrate-only
+```
+
+3. Start the server:
+```bash
+go run main.go
+```
+
+## Testing Strategy
+
+1. **Unit Tests**
+   - Repository layer: `repository/ping_repository_test.go`
+   - Service layer: `service/ping_service_test.go`
+   - Handler layer: `handler/ping_handler_test.go`
+
+2. **Integration Tests**
+   - Database integration tests with testcontainers
+   - Kafka integration tests with embedded broker
+
+3. **End-to-End Tests**
+   - Full API tests using real ConnectRPC clients
+   - Kubernetes deployment tests using kind
+
 ## Development Workflow
 1. Update proto definitions
-2. Push to main branch
-3. GitHub Actions automatically updates Buf Schema Registry
-4. Build and deploy server using Skaffold
+2. Generate code: `buf generate`
+3. Run tests: `go test ./...`
+4. Push to main branch
+5. GitHub Actions automatically updates Buf Schema Registry
+6. Build and deploy server using Skaffold
+
+## Monitoring and Observability
+
+- Health checks via `/healthz` endpoint
+- Structured logging with Zap
+- Metrics exposed for Prometheus
+- Distributed tracing with OpenTelemetry
