@@ -18,9 +18,6 @@ type MockPingService struct {
 }
 
 func NewMockPingService(shouldError bool) *service.PingService {
-	mock := &MockPingService{
-		shouldError: shouldError,
-	}
 	return &service.PingService{} // Return an empty service for the handler
 }
 
