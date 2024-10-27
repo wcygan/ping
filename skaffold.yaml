@@ -8,13 +8,13 @@ requires:
       - flink-config
     path: flink/skaffold.yaml
   - configs:
-    - kafka-config
+      - kafka-config
     path: kafka/skaffold.yaml
   - configs: 
-    - ping-db-config
+      - ping-db-config
     path: db/skaffold.yaml
   - configs:
-    - server-config
+      - server
     path: server/skaffold.yaml
 
 profiles:
