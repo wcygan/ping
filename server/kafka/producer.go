@@ -2,19 +2,16 @@ package kafka
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/Shopify/sarama"
+	pingv1 "your.module/proto/ping/v1"
+	"google.golang.org/protobuf/proto"
 )
 
 type Producer struct {
 	producer sarama.SyncProducer
-}
-
-type PingEvent struct {
-	Timestamp time.Time `json:"timestamp"`
 }
 
 func NewProducer(brokers []string) (*Producer, error) {
@@ -38,11 +35,11 @@ func (p *Producer) Close() error {
 }
 
 func (p *Producer) SendPingEvent(ctx context.Context, timestamp time.Time) error {
-	event := PingEvent{
-		Timestamp: timestamp,
+	event := &pingv1.PingRequest{
+		TimestampMs: timestamp.UnixNano() / int64(time.Millisecond),
 	}
 
-	data, err := json.Marshal(event)
+	data, err := proto.Marshal(event)
 	if err != nil {
 		return fmt.Errorf("failed to marshal event: %v", err)
 	}

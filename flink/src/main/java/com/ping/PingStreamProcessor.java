@@ -27,6 +27,7 @@ public class PingStreamProcessor {
             .setGroupId("ping-processor")
             .setStartingOffsets(OffsetsInitializer.earliest())
             .setValueOnlyDeserializer(new PingRequestDeserializer())
+            .setProperty("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer")
             .build();
 
         // Configure watermark strategy using the timestamp from PingRequest
