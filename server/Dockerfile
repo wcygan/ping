@@ -1,14 +1,32 @@
+# syntax=docker/dockerfile:1
+
+# Stage 1: Build the Go application
 FROM golang:1.22 as builder
 
-WORKDIR /app
+# Set the Current Working Directory inside the container
+WORKDIR /app/server
+
+# Cache dependencies by copying go.mod and go.sum first, and downloading modules
+COPY go.mod go.sum ./
+
+# Install the Go dependencies
+RUN go mod download
+
+# Copy the entire monorepo into the container's working directory
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o server
 
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+# Build the "server" executable
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux go build -o server ./main.go
+
+# Stage 2: Create a lightweight runtime image
+FROM alpine:3.14
+
+# Copy the built executable and migrations from the builder stage
+COPY --from=builder /app/server/server /app/server
+COPY --from=builder /app/server/migrations /app/migrations
+
 WORKDIR /app
-COPY --from=builder /app/server .
-COPY --from=builder /app/migrations ./migrations
 
-EXPOSE 8080
-CMD ["/app/server"]
+# Set the entrypoint to run the executable
+ENTRYPOINT ["/app/server"]

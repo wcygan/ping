@@ -2,24 +2,23 @@ apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
   name: server
-configs:
-  - name: server
-    build:
-      artifacts:
-        - image: server
-          context: .
-          docker:
-            dockerfile: Dockerfile
-      local:
-        useBuildkit: true
-    manifests:
-      rawYaml:
-        - server.yaml
-    deploy:
-      kubectl: {}
-    portForward:
-      - resourceType: service
-        resourceName: server
-        namespace: default
-        port: 8080
-        localPort: 8080
+build:
+  artifacts:
+    - image: server
+      docker:
+        dockerfile: server/Dockerfile
+  tagPolicy:
+    gitCommit: {}
+  local:
+    useBuildkit: true
+manifests:
+  rawYaml:
+    - server.yaml
+deploy:
+  kubectl: {}
+portForward:
+  - resourceType: service
+    resourceName: server
+    namespace: default
+    port: 8080
+    localPort: 8080

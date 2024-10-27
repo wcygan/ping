@@ -5,16 +5,16 @@ metadata:
 
 requires:
   - configs:
-      - flink-config
+    - flink-config
     path: flink/skaffold.yaml
   - configs:
-      - kafka-config
+    - kafka-config
     path: kafka/skaffold.yaml
   - configs: 
-      - ping-db-config
+    - ping-db-config
     path: db/skaffold.yaml
   - configs:
-      - server
+    - server
     path: server/skaffold.yaml
 
 profiles:
