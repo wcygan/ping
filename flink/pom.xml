@@ -132,16 +132,6 @@
                 <configuration>
                     <from>
                         <image>apache/flink:1.18.1</image>
-                        <platforms>
-                            <platform>
-                                <architecture>amd64</architecture>
-                                <os>linux</os>
-                            </platform>
-                            <platform>
-                                <architecture>arm64</architecture>
-                                <os>linux</os>
-                            </platform>
-                        </platforms>
                     </from>
                     <to>
                         <image>ping-processor</image>
@@ -155,11 +145,10 @@
                         <jvmFlags>
                             <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>
                         </jvmFlags>
-                        <useCurrentTimestamp>true</useCurrentTimestamp>
-                        <format>OCI</format>
                     </container>
                     <allowInsecureRegistries>true</allowInsecureRegistries>
                     <containerizingMode>packaged</containerizingMode>
+                    <useCurrentTimestamp>true</useCurrentTimestamp>
                     <extraDirectories>
                         <paths>
                             <path>
