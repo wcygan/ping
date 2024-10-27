@@ -8,6 +8,7 @@ import (
     pingv1 "buf.build/gen/go/wcygan/ping/protocolbuffers/go/ping/v1"
     "connectrpc.com/connect"
     "github.com/stretchr/testify/assert"
+    "fmt"
     "github.com/wcygan/ping/server/errors"
     "github.com/wcygan/ping/server/service"
     "go.uber.org/zap"
