@@ -34,7 +34,7 @@ profiles:
       helm:
         releases:
           - name: flink-kubernetes-operator
-            repo: https://downloads.apache.org/flink/flink-kubernetes-operator-1.6.0/
+            repo: https://apache.github.io/flink-kubernetes-operator
             remoteChart: flink-kubernetes-operator
             namespace: flink-operator
             createNamespace: true
