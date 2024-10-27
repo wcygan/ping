@@ -90,11 +90,27 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.ping.PingStreamProcessor</mainClass>
                                 </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
+                                    <addHeader>false</addHeader>
+                                </transformer>
                             </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -105,7 +121,7 @@
                 <version>3.3.2</version>
                 <configuration>
                     <from>
-                        <image>flink:1.17.1</image>
+                        <image>flink@sha256:4f7115e0e6d0acb8a1b8b9c8823f1e2292c4c07f2a3dc3b4a2ef7d0b0891261</image>
                     </from>
                     <to>
                         <image>ping-processor</image>
