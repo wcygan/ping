@@ -7,14 +7,20 @@ build:
     - image: server
       ko:
         fromImage: cgr.dev/chainguard/static:latest
-        platforms: ["linux/amd64"]
-  local:
-    useBuildkit: true
-  tagPolicy:
-    dateTime:
-      format: "20060102.150405"
-  env:
-    - KO_DOCKER_REPO=ko.local
+        labels:
+          org.opencontainers.image.source: "https://github.com/wcygan/ping"
+        dependencies:
+          paths:
+            - "**/*.go"
+            - "go.mod"
+            - "go.sum"
+          ignore:
+            - "**/testdata/**"
+        ldflags:
+          - "-s"
+          - "-w"
+  platforms: ["linux/amd64"]
+  local: {}
 manifests:
   rawYaml:
     - server.yaml
