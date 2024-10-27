@@ -11,10 +11,14 @@ require (
 	github.com/Shopify/sarama v1.38.1
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/jackc/pgx/v5 v5.7.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 )
 
-require go.uber.org/multierr v1.10.0 // indirect
+require (
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
