@@ -22,7 +22,7 @@ spec:
     state.backend: rocksdb
     state.backend.incremental: "true"
     state.checkpoints.dir: file:///flink-checkpoints
-    execution.checkpointing.interval: 60000
+    execution.checkpointing.interval: "60000"
     execution.checkpointing.mode: EXACTLY_ONCE
     
     # Task Configuration
