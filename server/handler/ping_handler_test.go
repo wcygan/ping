@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"testing"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/stretchr/testify/assert"
 	"github.com/wcygan/ping/server/service"
+	"go.uber.org/zap"
 )
 
 // MockPingService implements service.PingService for testing
@@ -49,11 +49,7 @@ func NewMockPingService(shouldError bool) *service.PingService {
 	mock := &MockPingService{
 		shouldError: shouldError,
 	}
-	return &service.PingService{
-		Repository: mock,
-		Producer:   mock,
-		Logger:     zap.NewNop(),
-	}
+	return service.NewPingService(mock, mock, zap.NewNop())
 }
 
 func (m *MockPingService) RecordPing(ctx context.Context, timestamp time.Time) error {
