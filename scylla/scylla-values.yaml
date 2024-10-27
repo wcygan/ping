@@ -1,0 +1,22 @@
+# Version information
+scyllaImage:
+  tag: 5.4.0
+agentImage:
+  tag: 3.3.3
+
+# Cluster information
+developerMode: true
+datacenter: us-east-1
+racks:
+  - name: us-east-1a
+    members: 1  # Start with 1 node for testing
+    storage:
+      capacity: 5Gi
+      storageClassName: standard  # Adjust based on your k8s cluster
+    resources:
+      limits:
+        cpu: 1
+        memory: 2Gi
+      requests:
+        cpu: 1
+        memory: 2Gi
