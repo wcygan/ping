@@ -3,7 +3,6 @@ kind: Config
 metadata:
   name: ping-application
 
-# Default configuration
 requires:
   - configs:
       - flink-config
