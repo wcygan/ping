@@ -18,11 +18,10 @@ type MockPingService struct {
 	shouldError bool
 }
 
-func NewMockPingService(shouldError bool) *service.PingService {
-	mock := &MockPingService{
+func NewMockPingService(shouldError bool) *MockPingService {
+	return &MockPingService{
 		shouldError: shouldError,
 	}
-	return &service.PingService{} // Return an empty service for the handler
 }
 
 func (m *MockPingService) RecordPing(ctx context.Context, timestamp time.Time) error {
