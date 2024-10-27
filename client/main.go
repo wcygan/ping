@@ -6,13 +6,15 @@ import (
 	"connectrpc.com/connect"
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
+
+var logger *zap.Logger
 
 var rootCmd = &cobra.Command{
 	Use:   "pingcli",
@@ -29,12 +31,16 @@ var pingCmd = &cobra.Command{
 		pingRequest := &pingv1.PingRequest{
 			TimestampMs: time.Now().UnixMilli(),
 		}
-		_, err := client.Ping(context.Background(), connect.NewRequest(pingRequest))
+		resp, err := client.Ping(context.Background(), connect.NewRequest(pingRequest))
 		if err != nil {
-			log.Fatalf("Ping request failed: %v", err)
+			logger.Fatal("Ping request failed",
+				zap.Error(err),
+				zap.Int64("timestamp_ms", pingRequest.TimestampMs))
 		}
 
-		log.Printf("Successfully pinged at %s (UTC)", time.UnixMilli(pingRequest.TimestampMs).Format(time.RFC3339))
+		logger.Info("Successfully pinged",
+			zap.Time("timestamp", time.UnixMilli(pingRequest.TimestampMs).UTC()),
+			zap.Any("response", resp.Msg))
 	},
 }
 
@@ -44,15 +50,24 @@ var countCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		client := pingv1connect.NewPingServiceClient(http.DefaultClient, address)
 		pingCountRequest := &pingv1.PingCountRequest{}
-		pingCountResponse, err := client.PingCount(context.Background(), connect.NewRequest(pingCountRequest))
+		resp, err := client.PingCount(context.Background(), connect.NewRequest(pingCountRequest))
 		if err != nil {
-			log.Fatalf("PingCount request failed: %v", err)
+			logger.Fatal("PingCount request failed", zap.Error(err))
 		}
-		fmt.Printf("PingCount response: %v\n", pingCountResponse.Msg.PingCount)
+		logger.Info("Received ping count", 
+			zap.Int64("count", resp.Msg.PingCount))
 	},
 }
 
 func init() {
+	// Initialize logger
+	var err error
+	logger, err = zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+
+	// Setup command flags
 	rootCmd.PersistentFlags().StringVar(&address, "address", "http://localhost:8080", "server address")
 	rootCmd.AddCommand(pingCmd)
 	rootCmd.AddCommand(countCmd)
