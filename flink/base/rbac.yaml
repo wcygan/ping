@@ -9,8 +9,11 @@ metadata:
   name: flink-role
 rules:
   - apiGroups: [""]
-    resources: ["pods", "configmaps"]
-    verbs: ["get", "list", "watch"]
+    resources: ["pods", "configmaps", "services"]
+    verbs: ["get", "list", "watch", "create", "delete", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "delete", "patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
