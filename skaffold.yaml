@@ -31,6 +31,13 @@ profiles:
             - kafka-install
             path: kafka/skaffold.yaml
     deploy:
-      kubectl:
-        manifests:
-          - https://github.com/apache/flink-kubernetes-operator/releases/download/v1.6.0/flink-kubernetes-operator.yaml
+      helm:
+        releases:
+          - name: flink-kubernetes-operator
+            repo: https://downloads.apache.org/flink/flink-kubernetes-operator-1.6.0/
+            remoteChart: flink-kubernetes-operator
+            namespace: flink-operator
+            createNamespace: true
+            wait: true
+            valuesFiles:
+              - flink/helm-values.yaml
