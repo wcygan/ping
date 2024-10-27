@@ -26,11 +26,16 @@ spec:
       cpu: 1
     podTemplate:
       spec:
+        securityContext:
+          fsGroup: 9999
         volumes:
           - name: flink-config
             emptyDir: {}
         containers:
           - name: flink-main-container
+            securityContext:
+              runAsUser: 9999
+              runAsGroup: 9999
             volumeMounts:
               - name: flink-config
                 mountPath: /opt/flink/conf
