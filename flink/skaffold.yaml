@@ -4,9 +4,10 @@ metadata:
   name: flink-config
 build:
   artifacts:
-  - image: ping-processor
-    jib:
-      project: com.ping:ping-processor
+    - image: ping-processor
+      context: .
+      jib:
+        project: com.ping:ping-processor
 deploy:
   kubectl:
     flags:
@@ -15,6 +16,7 @@ manifests:
   rawYaml:
     - base/rbac.yaml
     - base/flinkdeployment.yaml
+    - base/servicemonitor.yaml
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
