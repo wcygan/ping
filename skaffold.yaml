@@ -16,6 +16,9 @@ requires:
   - configs:
     - server
     path: server/skaffold.yaml
+  - configs:
+    - scylla-config
+    path: scylla/skaffold.yaml
 
 profiles:
   - name: bootstrap
@@ -32,3 +35,6 @@ profiles:
           - configs:
             - kafka-install
             path: kafka/skaffold.yaml
+          - configs:
+            - scylla-operator-install
+            path: scylla/skaffold.yaml
