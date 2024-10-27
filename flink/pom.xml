@@ -75,10 +75,16 @@
                     </from>
                     <to>
                         <image>ping-processor</image>
+                        <tags>
+                            <tag>latest</tag>
+                        </tags>
                     </to>
                     <container>
                         <mainClass>com.ping.PingStreamProcessor</mainClass>
                         <appRoot>/opt/flink/usrlib</appRoot>
+                        <jvmFlags>
+                            <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>
+                        </jvmFlags>
                     </container>
                 </configuration>
             </plugin>
