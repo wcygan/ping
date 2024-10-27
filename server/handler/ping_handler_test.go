@@ -2,13 +2,13 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
 	pingv1 "buf.build/gen/go/wcygan/ping/protocolbuffers/go/ping/v1"
 	"connectrpc.com/connect"
 	"github.com/stretchr/testify/assert"
-	"github.com/wcygan/ping/server/service"
 )
 
 // MockPingService implements the required service methods for testing
