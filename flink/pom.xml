@@ -112,9 +112,16 @@
                                         <exclude>META-INF/DEPENDENCIES</exclude>
                                         <exclude>META-INF/LICENSE</exclude>
                                         <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/maven/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google.protobuf</pattern>
+                                    <shadedPattern>shaded.com.google.protobuf</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -141,6 +148,14 @@
                         </jvmFlags>
                     </container>
                     <allowInsecureRegistries>true</allowInsecureRegistries>
+                    <extraDirectories>
+                        <paths>
+                            <path>
+                                <from>target</from>
+                                <into>/opt/flink/usrlib</into>
+                            </path>
+                        </paths>
+                    </extraDirectories>
                 </configuration>
             </plugin>
 
