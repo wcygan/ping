@@ -30,3 +30,7 @@ profiles:
           - configs:
             - kafka-install
             path: kafka/skaffold.yaml
+    deploy:
+      kubectl:
+        manifests:
+          - https://github.com/apache/flink-kubernetes-operator/releases/download/v1.6.0/flink-kubernetes-operator.yaml
