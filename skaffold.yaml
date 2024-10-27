@@ -15,7 +15,7 @@ requires:
     - ping-db-config
     path: db/skaffold.yaml
   - configs:
-    - server
+    - server-config
     path: server/skaffold.yaml
 
 profiles:
