@@ -24,6 +24,12 @@ spec:
     resource:
       memory: "2048Mi"
       cpu: 1
+    volumes:
+      - name: flink-config
+        emptyDir: {}
+    volumeMounts:
+      - name: flink-config
+        mountPath: /opt/flink/conf
     
   taskManager:
     resource:
