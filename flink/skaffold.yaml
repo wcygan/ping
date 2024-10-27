@@ -8,6 +8,6 @@ build:
     docker:
       dockerfile: Dockerfile
 deploy:
-  kustomize:
-    paths:
-      - base
+  kubectl:
+    manifests:
+      - base/deployment.yaml
