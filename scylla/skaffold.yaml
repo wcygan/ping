@@ -6,7 +6,7 @@ deploy:
   helm:
     releases:
       - name: scylla-operator
-        repo: https://scylla-operator-charts.storage.googleapis.com/stable
+        repo: https://scylladb.github.io/helm-charts/
         remoteChart: scylla-operator
         namespace: scylla-operator
         createNamespace: true
@@ -14,7 +14,7 @@ deploy:
         setValues:
           scyllaOperator:
             image:
-              tag: v1.14.0
+              tag: v1.12.0
           webhookServerCert:
             certManager:
               enabled: false
