@@ -10,8 +10,6 @@ import (
     "github.com/stretchr/testify/assert"
     "fmt"
     "github.com/wcygan/ping/server/errors"
-    "github.com/wcygan/ping/server/service"
-    "go.uber.org/zap"
 )
 
 // FakeService implements the necessary service methods for testing
@@ -21,7 +19,7 @@ type FakeService struct {
     shouldError bool
 }
 
-func NewFakeService() *FakeService {
+func NewFakeService() *PingServiceHandler {
     return &FakeService{
         pings: make([]time.Time, 0),
     }
@@ -62,9 +60,8 @@ func TestPingHandler_Ping(t *testing.T) {
 
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
-            fakeService := NewFakeService()
-            fakeService.shouldError = tt.shouldError
-            handler := NewPingServiceHandler(fakeService)
+            service := NewFakeService()
+            service.shouldError = tt.shouldError
 
             req := connect.NewRequest(&pingv1.PingRequest{
                 TimestampMs: time.Now().UnixMilli(),
@@ -106,10 +103,9 @@ func TestPingHandler_PingCount(t *testing.T) {
 
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
-            fakeService := NewFakeService()
-            fakeService.shouldError = tt.shouldError
-            fakeService.pingCount = tt.pingCount
-            handler := NewPingServiceHandler(fakeService)
+            service := NewFakeService()
+            service.shouldError = tt.shouldError
+            service.pingCount = tt.pingCount
 
             req := connect.NewRequest(&pingv1.PingCountRequest{})
 
