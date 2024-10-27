@@ -4,10 +4,16 @@ metadata:
   name: scylla-install
 deploy:
   helm:
-    repositories:
-      - name: jetstack
-        url: https://charts.jetstack.io
     releases:
+      - name: cert-manager
+        repo: https://charts.jetstack.io
+        remoteChart: cert-manager
+        version: 1.16.0
+        namespace: cert-manager
+        createNamespace: true
+        valuesFiles:
+          - cert-manager-values.yaml
+        wait: true
       - name: scylla
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla-operator
@@ -16,15 +22,6 @@ deploy:
         createNamespace: true
         valuesFiles:
           - values.yaml
-        wait: true
-      - name: cert-manager
-        repo: jetstack
-        chart: cert-manager
-        version: 1.8.0
-        namespace: cert-manager
-        createNamespace: true
-        valuesFiles:
-          - cert-manager-values.yaml
         wait: true
 ---
 apiVersion: skaffold/v4beta1
@@ -35,22 +32,3 @@ deploy:
   kubectl:
     flags:
       apply: ["--namespace=scylla"]
----
-apiVersion: skaffold/v4beta1
-kind: Config
-metadata:
-  name: cert-manager-test
-profiles:
-  - name: cert-manager-test
-    deploy:
-      helm:
-        releases:
-          - name: cert-manager
-            repo: jetstack
-            chart: cert-manager
-            version: 1.8.0
-            namespace: cert-manager
-            createNamespace: true
-            valuesFiles:
-              - cert-manager-values.yaml
-            wait: true
