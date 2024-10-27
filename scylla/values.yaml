@@ -8,3 +8,12 @@ scylla:
     racks:
       - name: rack1
         members: 3
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+        storage:
+          capacity: 10Gi
