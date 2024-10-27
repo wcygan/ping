@@ -7,7 +7,10 @@ build:
   - image: ping-processor
     jib:
       project: com.ping:ping-processor
+manifests:
+  rawYaml:
+    - base/deployment.yaml
 deploy:
   kubectl:
-    manifests:
-      - base/deployment.yaml
+    flags:
+      apply: ["--namespace=default"]
