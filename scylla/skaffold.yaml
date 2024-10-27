@@ -35,8 +35,8 @@ deploy:
       # 3. Install scylla cluster
       - name: scylla
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
-        remoteChart: scylla
-        version: 1.14.0
+        remoteChart: scylla/scylla
+        version: v1.14.0
         namespace: scylla
         createNamespace: true
         valuesFiles:
