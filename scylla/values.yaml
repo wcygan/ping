@@ -1,0 +1,10 @@
+operator:
+  image:
+    tag: 1.11.1
+scylla:
+  clusterName: scylla-cluster
+  datacenter:
+    name: dc1
+    racks:
+      - name: rack1
+        members: 3

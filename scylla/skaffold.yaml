@@ -1,0 +1,25 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: scylla-install
+deploy:
+  helm:
+    releases:
+      - name: scylla
+        repo: https://helm.scylladb.com/stable
+        remoteChart: scylla-operator
+        version: 1.11.1
+        namespace: scylla
+        createNamespace: true
+        valuesFiles:
+          - values.yaml
+        wait: true
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: scylla-config
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=scylla"]
