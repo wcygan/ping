@@ -16,7 +16,6 @@ manifests:
   rawYaml:
     - base/rbac.yaml
     - base/flinkdeployment.yaml
-    - base/servicemonitor.yaml
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
