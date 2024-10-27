@@ -124,7 +124,7 @@
                 <version>3.3.2</version>
                 <configuration>
                     <from>
-                        <image>flink@sha256:4f7115e0e6d0acb8a1b8b9c8823f1e2292c4c07f2a3dc3b4a2ef7d0b0891261</image>
+                        <image>apache/flink:1.17.1-java11</image>
                     </from>
                     <to>
                         <image>ping-processor</image>
@@ -150,6 +150,7 @@
                     </extraDirectories>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>
