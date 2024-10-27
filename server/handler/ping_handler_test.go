@@ -11,15 +11,29 @@ import (
 	"github.com/wcygan/ping/server/service"
 )
 
-// MockPingService implements service.PingService for testing
+// MockPingService implements the required service methods for testing
 type MockPingService struct {
-	recordedPings []time.Time
-	pingCount     int64
-	shouldError   bool
+	shouldError bool
 }
 
-func NewMockPingService() *service.PingService {
-	return &service.PingService{} // Return an empty service for the handler
+func NewMockPingService(shouldError bool) *MockPingService {
+	return &MockPingService{
+		shouldError: shouldError,
+	}
+}
+
+func (m *MockPingService) RecordPing(ctx context.Context, timestamp time.Time) error {
+	if m.shouldError {
+		return fmt.Errorf("mock error")
+	}
+	return nil
+}
+
+func (m *MockPingService) GetPingCount(ctx context.Context) (int64, error) {
+	if m.shouldError {
+		return 0, fmt.Errorf("mock error")
+	}
+	return 42, nil
 }
 
 func TestPingHandler_Ping(t *testing.T) {
@@ -42,7 +56,7 @@ func TestPingHandler_Ping(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockService := NewMockPingService()
+			mockService := NewMockPingService(tt.shouldError)
 			handler := NewPingServiceHandler(mockService)
 
 			req := connect.NewRequest(&pingv1.PingRequest{
@@ -84,7 +98,7 @@ func TestPingHandler_PingCount(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockService := NewMockPingService()
+			mockService := NewMockPingService(tt.shouldError)
 			handler := NewPingServiceHandler(mockService)
 
 			req := connect.NewRequest(&pingv1.PingCountRequest{})
