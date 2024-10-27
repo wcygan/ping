@@ -5,14 +5,6 @@ metadata:
 deploy:
   helm:
     releases:
-      - name: cert-manager
-        repo: https://charts.jetstack.io
-        remoteChart: cert-manager
-        namespace: cert-manager
-        createNamespace: true
-        wait: true
-        setValues:
-          installCRDs: true
       - name: scylla-operator
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla-operator
@@ -25,9 +17,9 @@ deploy:
               tag: v1.14.0
           webhookServerCert:
             certManager:
-              enabled: true
-            selfSigned:
               enabled: false
+            selfSigned:
+              enabled: true
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
