@@ -36,6 +36,7 @@ profiles:
           - name: flink-kubernetes-operator
             repo: https://apache.github.io/flink-kubernetes-operator
             remoteChart: flink-kubernetes-operator
+            version: 1.9.0
             namespace: flink-operator
             createNamespace: true
             wait: true
