@@ -1,6 +1,6 @@
 # Ping (Client and Server)
 
-![Architecture](resources/architecture.svg)
+![Architecture](resources/Architecture.svg)
 
 This is a basic application which aims to experiment with Buf Schema Registry (BSR) and Cloud Native Postgres (CNPG). 
 
