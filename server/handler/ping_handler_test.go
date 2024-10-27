@@ -15,10 +15,44 @@ import (
 // MockPingService implements service.PingService for testing
 type MockPingService struct {
 	shouldError bool
+	pings      []time.Time
+}
+
+func (m *MockPingService) StorePing(ctx context.Context, timestamp time.Time) error {
+	if m.shouldError {
+		return fmt.Errorf("mock error")
+	}
+	m.pings = append(m.pings, timestamp)
+	return nil
+}
+
+func (m *MockPingService) CountPings(ctx context.Context) (int64, error) {
+	if m.shouldError {
+		return 0, fmt.Errorf("mock error")
+	}
+	return int64(len(m.pings)), nil
+}
+
+func (m *MockPingService) SendPingEvent(ctx context.Context, timestamp time.Time) error {
+	if m.shouldError {
+		return fmt.Errorf("mock error")
+	}
+	return nil
+}
+
+func (m *MockPingService) Close() error {
+	return nil
 }
 
 func NewMockPingService(shouldError bool) *service.PingService {
-	return &service.PingService{} // Return an empty service for the handler
+	mock := &MockPingService{
+		shouldError: shouldError,
+	}
+	return &service.PingService{
+		Repository: mock,
+		Producer:  mock,
+		Logger:    zap.NewNop(),
+	}
 }
 
 func (m *MockPingService) RecordPing(ctx context.Context, timestamp time.Time) error {
