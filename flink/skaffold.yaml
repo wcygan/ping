@@ -6,12 +6,12 @@ build:
   artifacts:
     - image: ping-processor
       context: .
-      jib:
-        project: com.ping:ping-processor
+      docker:
+        dockerfile: Dockerfile
       sync:
         manual:
           - src: "src/main/java/**/*.java"
-            dest: .
+            dest: /opt/flink/usrlib
 deploy:
   kubectl:
     flags:
