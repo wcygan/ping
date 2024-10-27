@@ -1,19 +1,29 @@
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
+  name: cert-manager-install
+deploy:
+  helm:
+    releases:
+      # 1. Install cert-manager first
+      - name: cert-manager
+        repo: https://charts.jetstack.io
+        remoteChart: cert-manager
+        version: v1.13.2
+        namespace: cert-manager
+        createNamespace: true
+        setValues:
+          installCRDs: true
+        wait: true
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
   name: scylla-install
 deploy:
   helm:
     releases:
-      - name: cert-manager
-        repo: https://charts.jetstack.io
-        remoteChart: cert-manager
-        version: 1.16.0
-        namespace: cert-manager
-        createNamespace: true
-        valuesFiles:
-          - cert-manager-values.yaml
-        wait: true
+      # 2. Install scylla-operator
       - name: scylla-operator
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla-operator
@@ -21,6 +31,8 @@ deploy:
         namespace: scylla-operator
         createNamespace: true
         wait: true
+
+      # 3. Install scylla cluster
       - name: scylla
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla
@@ -28,14 +40,18 @@ deploy:
         namespace: scylla
         createNamespace: true
         valuesFiles:
-          - values.yaml
+          - scylla-values.yaml
         wait: true
+
+      # 4. Install scylla-manager last
       - name: scylla-manager
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla-manager
         version: 1.14.0
         namespace: scylla-manager
         createNamespace: true
+        valuesFiles:
+          - manager-values.yaml
         wait: true
 ---
 apiVersion: skaffold/v4beta1
