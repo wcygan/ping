@@ -86,6 +86,7 @@
                             <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>
                         </jvmFlags>
                     </container>
+                    <allowInsecureRegistries>true</allowInsecureRegistries>
                 </configuration>
             </plugin>
         </plugins>
