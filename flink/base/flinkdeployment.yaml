@@ -24,12 +24,16 @@ spec:
     resource:
       memory: "2048Mi"
       cpu: 1
-    volumes:
-      - name: flink-config
-        emptyDir: {}
-    volumeMounts:
-      - name: flink-config
-        mountPath: /opt/flink/conf
+    podTemplate:
+      spec:
+        volumes:
+          - name: flink-config
+            emptyDir: {}
+        containers:
+          - name: flink-main-container
+            volumeMounts:
+              - name: flink-config
+                mountPath: /opt/flink/conf
     
   taskManager:
     resource:
