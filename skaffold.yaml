@@ -6,6 +6,9 @@ metadata:
 # Default configuration
 requires:
   - configs:
+      - flink-config
+    path: flink/skaffold.yaml
+  - configs:
     - kafka-config
     path: kafka/skaffold.yaml
   - configs: 
@@ -14,9 +17,6 @@ requires:
   - configs:
     - server
     path: server/skaffold.yaml
-  - configs:
-    - flink-config
-    path: flink/skaffold.yaml
 
 profiles:
   - name: bootstrap
