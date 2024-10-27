@@ -24,29 +24,9 @@ spec:
     resource:
       memory: "2048Mi"
       cpu: 1
-    podTemplate:
-      spec:
-        securityContext:
-          fsGroup: 9999
-        volumes:
-          - name: flink-config
-            emptyDir: {}
-        containers:
-          - name: flink-main-container
-            securityContext:
-              runAsUser: 9999
-              runAsGroup: 9999
-            volumeMounts:
-              - name: flink-config
-                mountPath: /opt/flink/conf
-            startupProbe:
-              httpGet:
-                path: /config
-                port: 8081
-              initialDelaySeconds: 10
-              periodSeconds: 5
-              failureThreshold: 10
-              timeoutSeconds: 5
+    resource:
+      memory: "2048Mi"
+      cpu: 1
     
   taskManager:
     resource:
