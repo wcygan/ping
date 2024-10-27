@@ -8,12 +8,12 @@ build:
       context: .
       jib:
         project: com.ping:ping-processor
+      ignore:
+        - target/**
       sync:
         manual:
           - src: "src/**/*.java"
             dest: .
-      ignore:
-        - target/**
 deploy:
   kubectl:
     flags:
