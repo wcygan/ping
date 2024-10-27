@@ -22,12 +22,12 @@ spec:
   jobManager:
     replicas: 1
     resource:
-      memory: "2048"
+      memory: "2048Mi"
       cpu: 1
     
   taskManager:
     resource:
-      memory: "2048"
+      memory: "2048Mi"
       cpu: 1
       
   job:
