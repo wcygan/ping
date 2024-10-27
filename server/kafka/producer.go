@@ -1,12 +1,12 @@
 package kafka
 
 import (
+	pingv1 "buf.build/gen/go/wcygan/ping/protocolbuffers/go/ping/v1"
 	"context"
 	"fmt"
 	"time"
 
 	"github.com/Shopify/sarama"
-	pingv1 "your.module/proto/ping/v1"
 	"google.golang.org/protobuf/proto"
 )
 
