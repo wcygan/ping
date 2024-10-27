@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: scylla-schema-init
+  namespace: scylla-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: cqlsh
+        image: scylladb/scylla:5.2.0
+        command: 
+        - /bin/bash
+        - -c
+        - |
+          cat <<EOF > /tmp/schema.cql
+          CREATE KEYSPACE IF NOT EXISTS metrics
+          WITH replication = {'class': 'NetworkTopologyStrategy', 'dc1': 1};
+
+          CREATE TABLE IF NOT EXISTS metrics.heatmap_data (
+              time_bucket timestamp,
+              minute int,
+              hour int,
+              ping_count int,
+              PRIMARY KEY ((hour), minute, time_bucket)
+          ) WITH CLUSTERING ORDER BY (minute ASC, time_bucket DESC);
+          EOF
+          
+          until cqlsh ping-scylla-cluster.scylla-system.svc -f /tmp/schema.cql; do
+            echo "Waiting for ScyllaDB to be ready..."
+            sleep 5
+          done
+      restartPolicy: OnFailure

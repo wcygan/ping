@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: scylla-operator-install
+deploy:
+  helm:
+    releases:
+      - name: scylla-operator
+        repo: https://scylladb.github.io/scylla-operator/
+        remoteChart: scylla-operator
+        namespace: scylla-operator
+        createNamespace: true
+        wait: true
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: scylla-config
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=scylla-system"]
+    hooks:
+      after:
+        - host:
+            command: ["kubectl", "wait", "--for=condition=Ready", "scyllaclusters", "ping-scylla-cluster", "-n", "scylla-system", "--timeout=300s"]
+manifests:
+  rawYaml:
+    - base/scylla-cluster.yaml
+    - base/init-schema.yaml
