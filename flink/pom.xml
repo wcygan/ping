@@ -36,7 +36,6 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka</artifactId>
             <version>3.2.0-1.18</version>
-            <scope>provided</scope>
         </dependency>
         
         <!-- Protocol Buffers -->
