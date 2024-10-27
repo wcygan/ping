@@ -38,3 +38,14 @@ profiles:
           - configs:
             - scylla-install
             path: scylla/skaffold.yaml
+  - name: test-scylla
+    patches:
+      - op: replace
+        path: /requires
+        value:
+          - configs:
+              - scylla-install
+            path: scylla/skaffold.yaml
+          - configs:
+              - scylla-config
+            path: scylla/skaffold.yaml
