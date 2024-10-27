@@ -6,15 +6,16 @@ build:
   artifacts:
     - image: server
       docker:
-        dockerfile: Dockerfile
+        dockerfile: server/Dockerfile
   tagPolicy:
     gitCommit: {}
   local:
     useBuildkit: true
+manifests:
+  rawYaml:
+    - server.yaml
 deploy:
-  kustomize:
-    paths:
-      - ../manifests/apps/server/overlays/dev
+  kubectl: {}
 portForward:
   - resourceType: service
     resourceName: server
