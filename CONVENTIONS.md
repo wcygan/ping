@@ -1,0 +1,2 @@
+- Do not run any `skaffold` commands; just suggest them
+- Every response must be in English

@@ -38,6 +38,18 @@ profiles:
           - configs:
             - scylla-install
             path: scylla/skaffold.yaml
+
+  # Testing Profile to install cert-manager
+  - name: cert-manager-install
+    patches:
+      - op: replace
+        path: /requires
+        value:
+          - configs:
+              - cert-manager-install
+            path: scylla/skaffold.yaml
+
+  # Testing Profile to install scylla
   - name: test-scylla
     patches:
       - op: replace

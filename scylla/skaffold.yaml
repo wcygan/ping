@@ -27,31 +27,28 @@ deploy:
       - name: scylla-operator
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla-operator
-        version: 1.14.0
+        version: 1.13.0
         namespace: scylla-operator
         createNamespace: true
         wait: true
 
       # 3. Install scylla cluster
       - name: scylla
-        repo: https://scylla-operator-charts.storage.googleapis.com/stable
+        # For some reason, adding this causes issues... If you have a problem with it, `helm repo add scylla https://scylla-operator-charts.storage.googleapis.com/stable` and try again
+        # repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla/scylla
-        version: v1.14.0
+        version: v1.13.0
         namespace: scylla
         createNamespace: true
-        valuesFiles:
-          - scylla-values.yaml
         wait: true
 
       # 4. Install scylla-manager last
       - name: scylla-manager
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla-manager
-        version: 1.14.0
+        version: 1.13.0
         namespace: scylla-manager
         createNamespace: true
-        valuesFiles:
-          - manager-values.yaml
         wait: true
 ---
 apiVersion: skaffold/v4beta1
