@@ -14,9 +14,23 @@ deploy:
         valuesFiles:
           - cert-manager-values.yaml
         wait: true
-      - name: scylla
+      - name: scylla-operator
         repo: https://scylla-operator-charts.storage.googleapis.com/stable
         remoteChart: scylla-operator
+        version: 1.14.0
+        namespace: scylla-operator
+        createNamespace: true
+        wait: true
+      - name: scylla-manager
+        repo: https://scylla-operator-charts.storage.googleapis.com/stable
+        remoteChart: scylla-manager
+        version: 1.14.0
+        namespace: scylla-manager
+        createNamespace: true
+        wait: true
+      - name: scylla
+        repo: https://scylla-operator-charts.storage.googleapis.com/stable
+        remoteChart: scylla
         version: 1.14.0
         namespace: scylla
         createNamespace: true
