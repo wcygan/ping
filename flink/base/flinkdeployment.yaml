@@ -39,6 +39,14 @@ spec:
             volumeMounts:
               - name: flink-config
                 mountPath: /opt/flink/conf
+            startupProbe:
+              httpGet:
+                path: /config
+                port: 8081
+              initialDelaySeconds: 10
+              periodSeconds: 5
+              failureThreshold: 10
+              timeoutSeconds: 5
     
   taskManager:
     resource:
