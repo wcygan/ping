@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 	"testing"
 	"time"
 
@@ -15,7 +16,7 @@ import (
 // MockPingService implements service.PingService for testing
 type MockPingService struct {
 	shouldError bool
-	pings      []time.Time
+	pings       []time.Time
 }
 
 func (m *MockPingService) StorePing(ctx context.Context, timestamp time.Time) error {
@@ -50,8 +51,8 @@ func NewMockPingService(shouldError bool) *service.PingService {
 	}
 	return &service.PingService{
 		Repository: mock,
-		Producer:  mock,
-		Logger:    zap.NewNop(),
+		Producer:   mock,
+		Logger:     zap.NewNop(),
 	}
 }
 
