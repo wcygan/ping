@@ -9,17 +9,20 @@ import (
 	pingv1 "buf.build/gen/go/wcygan/ping/protocolbuffers/go/ping/v1"
 	"connectrpc.com/connect"
 	"github.com/stretchr/testify/assert"
+	"github.com/wcygan/ping/server/service"
 )
 
-// MockPingService implements the required service methods for testing
+// MockPingService implements service.PingService for testing
 type MockPingService struct {
+	service.PingService
 	shouldError bool
 }
 
-func NewMockPingService(shouldError bool) *MockPingService {
-	return &MockPingService{
+func NewMockPingService(shouldError bool) *service.PingService {
+	mock := &MockPingService{
 		shouldError: shouldError,
 	}
+	return &service.PingService{} // Return an empty service for the handler
 }
 
 func (m *MockPingService) RecordPing(ctx context.Context, timestamp time.Time) error {
