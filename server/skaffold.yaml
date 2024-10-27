@@ -14,7 +14,7 @@ build:
 deploy:
   kustomize:
     paths:
-      - overlays/dev
+      - ../manifests/apps/server/overlays/dev
 portForward:
   - resourceType: service
     resourceName: server
