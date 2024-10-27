@@ -7,6 +7,8 @@ spec:
   flinkVersion: v1_17
   flinkConfiguration:
     taskmanager.numberOfTaskSlots: "2"
+    state.checkpoints.dir: "file:///opt/flink/checkpoints"
+    state.savepoints.dir: "file:///opt/flink/savepoints"
     
   serviceAccount: flink
   
