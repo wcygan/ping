@@ -8,8 +8,6 @@ requires:
   - configs:
       - flink-config
     path: flink/skaffold.yaml
-env:
-  - KO_DOCKER_REPO=ko.local
   - configs:
     - kafka-config
     path: kafka/skaffold.yaml
