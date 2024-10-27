@@ -2,7 +2,7 @@ installCRDs: true
 scylladb:
   datacenter:
     racks:
-        - name: manager-rack
-          storage:
-            storageClassName: standard  # Use the available storage class
-            capacity: 5Gi  # Adjust size as needed
+      - name: manager-rack
+        storage:
+          storageClassName: standard  # Using default minikube storage class
+          capacity: 5Gi  # Adjust size as needed

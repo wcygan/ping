@@ -12,7 +12,7 @@ racks:
     members: 1  # Start with 1 node for testing
     storage:
       capacity: 5Gi
-      storageClassName: standard  # Adjust based on your k8s cluster
+      storageClassName: standard  # Using default minikube storage class
     resources:
       limits:
         cpu: 1
