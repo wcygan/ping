@@ -26,7 +26,7 @@ profiles:
         value:
           - configs:
               - flink-operator-install
-            path: flink/bootstrap/skaffold.yaml
+            path: flink/skaffold.yaml
           - configs:
             - ping-db-install
             path: db/skaffold.yaml

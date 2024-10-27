@@ -3,3 +3,4 @@
 **/gen/**
 .aider*
 .env
+target/
