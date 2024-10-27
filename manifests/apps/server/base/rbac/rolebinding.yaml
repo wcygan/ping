@@ -9,14 +9,3 @@ roleRef:
   kind: Role
   name: cnpg-reader
   apiGroup: rbac.authorization.k8s.io
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: cnpg-reader-binding
-subjects:
-- kind: ServiceAccount
-  name: default
-roleRef:
-  kind: Role
-  name: cnpg-reader
-  apiGroup: rbac.authorization.k8s.io
