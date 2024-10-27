@@ -25,11 +25,11 @@ profiles:
         path: /requires
         value:
           - configs:
+              - flink-operator-install
+            path: flink/bootstrap/skaffold.yaml
+          - configs:
             - ping-db-install
             path: db/skaffold.yaml
           - configs:
             - kafka-install
             path: kafka/skaffold.yaml
-          - configs:
-            - flink-operator-install
-            path: flink/bootstrap/skaffold.yaml

@@ -9,6 +9,9 @@ build:
       project: com.ping:ping-processor
 deploy:
   kubectl:
-    manifests:
-      - base/rbac.yaml
-      - base/flinkdeployment.yaml
+    flags:
+      apply: ["--namespace=default"]
+manifests:
+  rawYaml:
+    - base/rbac.yaml
+    - base/flinkdeployment.yaml
