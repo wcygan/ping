@@ -8,16 +8,9 @@ spec:
   flinkConfiguration:
     taskmanager.numberOfTaskSlots: "2"
     
-    # Checkpointing configuration
+    # Checkpointing configuration for exactly-once processing
     execution.checkpointing.interval: "10s"
     execution.checkpointing.mode: EXACTLY_ONCE
-    state.checkpoints.dir: "file:///opt/flink/data/checkpoints"
-    state.savepoints.dir: "file:///opt/flink/data/savepoints"
-    
-    # Kafka configuration
-    execution.checkpointing.externalized-checkpoint-retention: RETAIN_ON_CANCELLATION
-    execution.checkpointing.min-pause: "5s"
-    execution.checkpointing.timeout: "10m"
     
     # Metrics
     metrics.reporters: prometheus
@@ -40,5 +33,5 @@ spec:
   job:
     jarURI: local:///opt/flink/usrlib/ping-processor.jar
     parallelism: 2
-    upgradeMode: last-state
+    upgradeMode: stateless
     entryClass: com.ping.PingStreamProcessor
