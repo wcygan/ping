@@ -54,6 +54,20 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>buf</id>
+            <name>Buf Maven Repository</name>
+            <url>https://buf.build/gen/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
