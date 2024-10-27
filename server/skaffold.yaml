@@ -5,10 +5,7 @@ metadata:
 build:
   artifacts:
     - image: server
-      docker:
-        dockerfile: server/Dockerfile
-  tagPolicy:
-    gitCommit: {}
+      ko: {}
   local:
     useBuildkit: true
 manifests:
