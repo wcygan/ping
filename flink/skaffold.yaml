@@ -10,7 +10,7 @@ build:
         project: com.ping:ping-processor
       sync:
         manual:
-          - src: "src/**/*.java"
+          - src: "src/main/java/**/*.java"
             dest: .
 deploy:
   kubectl:

@@ -141,14 +141,6 @@
                         </jvmFlags>
                     </container>
                     <allowInsecureRegistries>true</allowInsecureRegistries>
-                    <extraDirectories>
-                        <paths>
-                            <path>
-                                <from>target</from>
-                                <into>/opt/flink/usrlib</into>
-                            </path>
-                        </paths>
-                    </extraDirectories>
                 </configuration>
             </plugin>
 
