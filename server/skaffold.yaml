@@ -6,9 +6,9 @@ build:
   artifacts:
     - image: server
       docker:
-        dockerfile: Dockerfile
+        dockerfile: server/Dockerfile
   local:
-    push: false
+    useBuildkit: true
 manifests:
   rawYaml:
     - server.yaml
