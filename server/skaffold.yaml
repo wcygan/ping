@@ -5,9 +5,16 @@ metadata:
 build:
   artifacts:
     - image: server
-      ko: {}
+      ko:
+        fromImage: cgr.dev/chainguard/static:latest
+        platforms: ["linux/amd64"]
   local:
     useBuildkit: true
+  tagPolicy:
+    dateTime:
+      format: "20060102.150405"
+  env:
+    - KO_DOCKER_REPO=ko.local
 manifests:
   rawYaml:
     - server.yaml
