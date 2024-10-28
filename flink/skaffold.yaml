@@ -8,10 +8,8 @@ build:
       docker:
         dockerfile: flink/Dockerfile
       sync:
-        manual:
-          - src: "src/main/java/**/*.java"
-            dest: /opt/flink/usrlib/
-            strip: "src/main/java/"
+        infer:
+          - "**/*.jar"
   tagPolicy:
     gitCommit: {}
   local:
