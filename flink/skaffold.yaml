@@ -25,7 +25,7 @@ deploy:
             command: ["sleep", "5"]
             os: [darwin, linux]
         - host:
-            command: ["kubectl", "apply", "-f", "base/flinkdeployment.yaml"]
+            command: ["kubectl", "apply", "-f", "flink/base/flinkdeployment.yaml"]
             os: [darwin, linux]
 manifests:
   rawYaml:
