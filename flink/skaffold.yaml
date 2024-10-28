@@ -4,7 +4,7 @@ metadata:
   name: flink-config
 build:
   artifacts:
-    - image: ping-processor
+    - image: ping-processor-flink
       docker:
         dockerfile: flink/Dockerfile
       sync:
