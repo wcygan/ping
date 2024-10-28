@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.8.4-openjdk-11 AS builder
+FROM --platform=linux/arm64 maven:3.8.4-openjdk-11 AS builder
 
 WORKDIR /build
 COPY pom.xml .
@@ -9,7 +9,7 @@ COPY src ./src
 RUN mvn clean package
 
 # Final stage
-FROM apache/flink:1.18.1
+FROM --platform=linux/arm64 apache/flink:1.18.1
 
 # Copy the application jar from builder stage
 COPY --from=builder /build/target/ping-processor-1.0-SNAPSHOT.jar /opt/flink/usrlib/ping-processor-1.0-SNAPSHOT.jar
