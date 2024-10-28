@@ -16,28 +16,14 @@ build:
     gitCommit: {}
   local:
     useBuildkit: true
-deploy:
-  kubectl:
-    flags:
-      apply: ["--namespace=default"]
-    hooks:
-      after:
-        - host:
-            command: ["sh", "-c", "kubectl delete --wait=true flinkdeployment ping-processor || true"]
-            os: [darwin, linux]
-        - host:
-            command: ["sh", "-c", "kubectl wait --for=delete flinkdeployment/ping-processor --timeout=60s || true"]
-            os: [darwin, linux]
-        - host:
-            command: ["kubectl", "apply", "-f", "flink/base/flinkdeployment.yaml"]
-            os: [darwin, linux]
-        - host:
-            command: ["kubectl", "wait", "--for=condition=Available", "flinkdeployment/ping-processor", "--timeout=120s"]
-            os: [darwin, linux]
 manifests:
   rawYaml:
     - base/rbac.yaml
     - base/flinkdeployment.yaml
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=default"]
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
