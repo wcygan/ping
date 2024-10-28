@@ -96,8 +96,9 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
                     pipeline.hincrBy("ping:counters", "total", 1);
                     
                     // Increment per-minute counter
-                    long minuteTimestamp = ping.getTimestampMs() / (60 * 1000);
-                    pipeline.hincrBy("ping:counters", "minute:" + minuteTimestamp, 1);
+                    // Format: minute:{timestamp} where timestamp is floor(milliseconds/60000)
+                    // Example: minute:28815438 represents the minute bucket for 2024-01-15T12:34:00Z
+                    pipeline.hincrBy("ping:counters", getMinuteKey(ping.getTimestampMs()), 1);
                     
                     // Keep a sliding window of the last 60 minutes
                     pipeline.expire("ping:counters", 3600); // 1 hour TTL
@@ -185,5 +186,14 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
             jedisPool.close();
             LOG.info("Closed Redis connection pool");
         }
+    }
+
+    /**
+     * Converts a millisecond timestamp into a minute-bucket key for Redis.
+     * @param timestampMs Timestamp in milliseconds
+     * @return Redis key in format "minute:{bucket}" where bucket is the floor division of milliseconds by 60000
+     */
+    private String getMinuteKey(long timestampMs) {
+        return String.format("minute:%d", timestampMs / (60 * 1000));
     }
 }
