@@ -1,6 +1,7 @@
 package com.ping;
 
 import build.buf.gen.ping.v1.PingRequest;
+import com.esotericsoftware.minlog.Log;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
@@ -28,6 +29,8 @@ public class PingStreamProcessor {
         env.getCheckpointConfig().setMinPauseBetweenCheckpoints(Duration.ofSeconds(5).toMillis());
         env.getCheckpointConfig().setCheckpointTimeout(Duration.ofMinutes(1).toMillis());
         env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
+
+        Log.info("Starting PingStreamProcessor");
 
         KafkaSource<PingRequest> source = KafkaSource.<PingRequest>builder()
             .setBootstrapServers(System.getenv().getOrDefault("KAFKA_BROKERS", "ping-kafka-cluster-kafka-bootstrap.kafka-system:9092"))
