@@ -1,0 +1,23 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: dragonfly-operator-install
+manifests:
+  rawYaml:
+    - dragonfly-operator.yaml
+deploy:
+  kubectl:
+    flags:
+      apply: [ "--namespace=default" ]
+---
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: dragonfly-config
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=default"]
+manifests:
+  rawYaml:
+    - dragonfly.yaml

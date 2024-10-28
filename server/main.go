@@ -81,8 +81,8 @@ func main() {
 	}
 	defer producer.Close()
 
-	// Create repository
-	repo := repository.NewPingRepository(pool)
+	// Create repository with Redis connection
+	repo := repository.NewPingRepository(pool, "ping-cache")
 
 	pingService := service.NewPingService(repo, producer, log)
 	pingHandler := handler.NewPingServiceHandler(pingService)

@@ -4,22 +4,24 @@ metadata:
   name: flink-config
 build:
   artifacts:
-    - image: ping-processor
-      context: .
+    - image: ping-processor-flink
       docker:
-        dockerfile: Dockerfile
+        dockerfile: flink/Dockerfile
       sync:
-        manual:
-          - src: "src/main/java/**/*.java"
-            dest: /opt/flink/usrlib
-deploy:
-  kubectl:
-    flags:
-      apply: ["--namespace=default"]
+        infer:
+          - "**/*.jar"
+  tagPolicy:
+    gitCommit: {}
+  local:
+    useBuildkit: true
 manifests:
   rawYaml:
     - base/rbac.yaml
     - base/flinkdeployment.yaml
+deploy:
+  kubectl:
+    flags:
+      apply: ["--namespace=default"]
 ---
 apiVersion: skaffold/v4beta1
 kind: Config

@@ -85,6 +85,18 @@ kubectl exec -it ping-kafka-cluster-ping-kafka-cluster-pool-0 -n kafka-system --
 View the first 10 pings:
 ```bash
 kubectl cnpg psql pg-cluster -- -d pingdb -c "SELECT * FROM pings LIMIT 10;"
+                  id                  |       pinged_at        
+--------------------------------------+------------------------
+ 325f796d-4fc5-4ad8-a02e-fb7be2a02a62 | 1974-02-01 04:52:11+00
+ 862b1432-ddb5-48ac-bffc-a3b888439e02 | 1974-02-01 04:52:11+00
+ 96ed24fd-d29f-4b5a-99f6-5553edcde998 | 1974-02-01 04:52:11+00
+ 40e05cc8-9f94-462e-8946-1b0b02ec49a6 | 2024-10-28 04:10:04+00
+ c54d7bd3-dee4-4c78-9978-dd9ce5e8d965 | 2024-10-28 04:10:04+00
+ 7355a658-138c-4125-aeb8-fc6fad9fc548 | 2024-10-28 04:10:04+00
+ d108f74f-69fa-42b5-a649-1210047b7039 | 2024-10-28 04:10:04+00
+ 9d1d4f06-9891-4fe9-91f6-c3271e0e9a44 | 2024-10-28 04:10:04+00
+ 934292bb-812e-4b09-829a-666dccefb349 | 2024-10-28 04:10:04+00
+ 304b0c35-7bc8-4029-8b3d-8e5f6fef6e66 | 2024-10-28 04:10:04+00
 ```
 
 Count total pings:
@@ -117,4 +129,72 @@ minikube stop
 | [Postgres](https://www.postgresql.org/)                                                                                                                                 | Relational database management system                                 |
 | [CloudNativePG](https://cloudnative-pg.io/)                                                                                                                             | Operator for managing PostgreSQL on Kubernetes                        |
 | [pgx](https://github.com/jackc/pgx)                                                                                                                                     | PostgreSQL driver and toolkit for Go                                  |
+| [Apache Flink](https://flink.apache.org/)                                                                                                                               | Stream processing framework for real-time analytics                   |
+| [DragonflyDB](https://dragonflydb.io/)                                                                                                                                 | High-performance Redis-compatible in-memory store                     |
 | [Orbstack](https://orbstack.dev/) (or [Docker Desktop](https://www.docker.com/products/docker-desktop/))                                                                | Virtualized environment for running containers                        |
+
+## Data Flow & Consistency Model
+
+The application uses an eventually consistent model for ping counts:
+
+1. When a ping is received:
+   - It is immediately stored in PostgreSQL (durable storage)
+   - A ping event is published to Kafka
+
+2. The Flink ping-processor:
+   - Consumes ping events from Kafka
+   - Maintains running counts with buffered writes to DragonflyDB
+   - Uses a 1000-record or 1-second buffer (whichever comes first)
+   - Provides exactly-once processing guarantees
+
+3. Count retrieval behavior:
+   - First attempts to read from DragonflyDB cache
+   - Falls back to PostgreSQL if cache is unavailable
+   - Cache value may be slightly delayed due to nearline processing & buffering
+
+Example interaction showing eventual consistency:
+
+```bash
+# Send 3 pings in quick succession
+curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
+     -H "Content-Type: application/json" \
+     -d '{"timestamp_ms": 1728926331000}'
+curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
+     -H "Content-Type: application/json" \
+     -d '{"timestamp_ms": 1728926332000}'
+curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
+     -H "Content-Type: application/json" \
+     -d '{"timestamp_ms": 1728926333000}'
+
+# First count might show 0 or partial count while Flink processes the batch
+curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
+     -H "Content-Type: application/json" \
+     -d '{}'
+
+# After ~1 second, count will show all 3 pings
+curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
+     -H "Content-Type: application/json" \
+     -d '{}'
+```
+
+You can observe the Flink processing in real-time:
+
+```bash
+kubectl logs ping-processor-taskmanager-1-1
+```
+
+And monitor the cache state:
+
+```bash
+kubectl exec -it ping-cache-0 -- redis-cli HGETALL ping:counters
+ 1) "total"
+ 2) "30"
+ 3) "minute:2148772"
+ 4) "3"
+ 5) "minute:28834810"
+ 6) "15"
+ 7) "minute:28834824"
+ 8) "2"
+ 9) "minute:28834830"
+10) "10"
+```
