@@ -69,15 +69,11 @@ The Flink job implements efficient buffered writes to DragonflyDB:
 
 ### Database Selection
 
-Initially, ScyllaDB was considered as the primary database but was ultimately replaced with PostgreSQL due to:
+Initially, ScyllaDB was considered as a method to store time-series data but was ultimately replaced with DragonflyDB due to:
 - Complexity of the ScyllaDB Operator in Kubernetes
 - Higher operational overhead
 - More complex deployment and maintenance requirements
-- PostgreSQL offering sufficient performance for our use case
 
-PostgreSQL provides:
-- Proven reliability
-- Simpler operations
-- Native Kubernetes support via CloudNativePG
-- Familiar SQL interface
-- Rich ecosystem of tools and extensions
+So, instead of being able to depict time series data in a more comprehensive manner, this tradeoff restricted the system to
+only store total counts & 1-hour sliding window counts, which is totally acceptable since the intent was to demonstrate
+some time of real-time processing capabilities.
