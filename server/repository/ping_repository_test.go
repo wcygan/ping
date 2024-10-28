@@ -20,12 +20,14 @@ func NewInMemoryDB() *InMemoryDB {
 }
 
 type InMemoryPingRepository struct {
-    db *InMemoryDB
+    db    *InMemoryDB
+    cache map[string]string
 }
 
 func NewInMemoryPingRepository() *InMemoryPingRepository {
     return &InMemoryPingRepository{
-        db: NewInMemoryDB(),
+        db:    NewInMemoryDB(),
+        cache: make(map[string]string),
     }
 }
 
