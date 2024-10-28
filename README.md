@@ -117,4 +117,63 @@ minikube stop
 | [Postgres](https://www.postgresql.org/)                                                                                                                                 | Relational database management system                                 |
 | [CloudNativePG](https://cloudnative-pg.io/)                                                                                                                             | Operator for managing PostgreSQL on Kubernetes                        |
 | [pgx](https://github.com/jackc/pgx)                                                                                                                                     | PostgreSQL driver and toolkit for Go                                  |
+| [Apache Flink](https://flink.apache.org/)                                                                                                                               | Stream processing framework for real-time analytics                   |
+| [DragonflyDB](https://dragonflydb.io/)                                                                                                                                 | High-performance Redis-compatible in-memory store                     |
 | [Orbstack](https://orbstack.dev/) (or [Docker Desktop](https://www.docker.com/products/docker-desktop/))                                                                | Virtualized environment for running containers                        |
+
+## Data Flow & Consistency Model
+
+The application uses an eventually consistent model for ping counts:
+
+1. When a ping is received:
+   - It is immediately stored in PostgreSQL (durable storage)
+   - A ping event is published to Kafka
+   - The current count is read from DragonflyDB cache
+
+2. The Flink ping-processor:
+   - Consumes ping events from Kafka
+   - Maintains running counts with buffered writes to DragonflyDB
+   - Uses a 1000-record or 1-second buffer (whichever comes first)
+   - Provides exactly-once processing guarantees
+
+3. Count retrieval behavior:
+   - First attempts to read from DragonflyDB cache
+   - Falls back to PostgreSQL if cache is unavailable
+   - May be slightly delayed due to buffered processing
+
+Example interaction showing eventual consistency:
+
+```bash
+# Send 3 pings in quick succession
+curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
+     -H "Content-Type: application/json" \
+     -d '{"timestamp_ms": 1728926331000}'
+curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
+     -H "Content-Type: application/json" \
+     -d '{"timestamp_ms": 1728926332000}'
+curl -X POST http://localhost:8080/ping.v1.PingService/Ping \
+     -H "Content-Type: application/json" \
+     -d '{"timestamp_ms": 1728926333000}'
+
+# First count might show 0 or partial count while Flink processes the batch
+curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
+     -H "Content-Type: application/json" \
+     -d '{}'
+
+# After ~1 second, count will show all 3 pings
+curl -X POST http://localhost:8080/ping.v1.PingService/PingCount \
+     -H "Content-Type: application/json" \
+     -d '{}'
+```
+
+You can observe the Flink processing in real-time:
+
+```bash
+kubectl logs -f deployment/ping-processor
+```
+
+And monitor the cache state:
+
+```bash
+kubectl exec -it ping-cache-0 -- redis-cli HGETALL ping:counters
+```
