@@ -30,7 +30,10 @@ public class PingStreamProcessor {
         env.getCheckpointConfig().setCheckpointTimeout(Duration.ofMinutes(1).toMillis());
         env.getCheckpointConfig().setMaxConcurrentCheckpoints(1);
 
-        Log.info("Starting PingStreamProcessor");
+        Log.info("Starting PingStreamProcessor with configuration:");
+        Log.info("Kafka Brokers: " + System.getenv().getOrDefault("KAFKA_BROKERS", "ping-kafka-cluster-kafka-bootstrap.kafka-system:9092"));
+        Log.info("Redis Host: " + System.getenv().getOrDefault("REDIS_HOST", "ping-cache"));
+        Log.info("Redis Port: " + System.getenv().getOrDefault("REDIS_PORT", "6379"));
 
         KafkaSource<PingRequest> source = KafkaSource.<PingRequest>builder()
             .setBootstrapServers(System.getenv().getOrDefault("KAFKA_BROKERS", "ping-kafka-cluster-kafka-bootstrap.kafka-system:9092"))

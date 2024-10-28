@@ -12,6 +12,9 @@ build:
         manual:
           - src: "src/main/java/**/*.java"
             dest: /opt/flink/usrlib
+      hooks:
+        after:
+          - command: ["kubectl", "rollout", "restart", "flinkdeployment/ping-processor"]
 deploy:
   kubectl:
     flags:
