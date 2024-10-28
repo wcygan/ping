@@ -12,7 +12,7 @@ requires:
     path: kafka/skaffold.yaml
   - configs: 
     - ping-db-config
-    path: db/skaffold.yaml
+    path: postgres/skaffold.yaml
   - configs:
     - server
     path: server/skaffold.yaml
@@ -28,7 +28,7 @@ profiles:
             path: flink/skaffold.yaml
           - configs:
             - ping-db-install
-            path: db/skaffold.yaml
+            path: postgres/skaffold.yaml
           - configs:
             - kafka-install
             path: kafka/skaffold.yaml
