@@ -136,6 +136,7 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
 
     @Override
     public void snapshotState(FunctionSnapshotContext context) throws Exception {
+        LOG.debug("Taking snapshot of state, {} items in buffer", buffer.size());
         checkpointedState.clear();
         
         // First flush any buffered elements
@@ -151,6 +152,7 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
 
     @Override
     public void initializeState(FunctionInitializationContext context) throws Exception {
+        LOG.info("Initializing state from checkpoint");
         ListStateDescriptor<PingRequest> descriptor =
             new ListStateDescriptor<>("buffered-pings", PingRequest.class);
         checkpointedState = context.getOperatorStateStore().getListState(descriptor);
@@ -166,6 +168,7 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
 
     @Override
     public void close() throws Exception {
+        LOG.info("Closing BufferingRedisSink");
         if (buffer != null && !buffer.isEmpty()) {
             try {
                 flush();
