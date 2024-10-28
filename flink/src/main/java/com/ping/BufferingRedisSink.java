@@ -153,6 +153,10 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
     @Override
     public void initializeState(FunctionInitializationContext context) throws Exception {
         LOG.info("Initializing state from checkpoint");
+        
+        // Initialize buffer first
+        buffer = new ArrayList<>();
+        
         ListStateDescriptor<PingRequest> descriptor =
             new ListStateDescriptor<>("buffered-pings", PingRequest.class);
         checkpointedState = context.getOperatorStateStore().getListState(descriptor);

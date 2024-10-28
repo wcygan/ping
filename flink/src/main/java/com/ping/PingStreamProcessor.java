@@ -3,6 +3,8 @@ package com.ping;
 import build.buf.gen.ping.v1.PingRequest;
 import com.esotericsoftware.minlog.Log;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.api.common.serialization.AbstractDeserializationSchema;
@@ -22,6 +24,9 @@ public class PingStreamProcessor {
 
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        
+        // Register TypeInformation for PingRequest
+        TypeInformation.of(PingRequest.class);
 
         // Enable checkpointing for exactly-once processing
         env.enableCheckpointing(Duration.ofSeconds(10).toMillis());
