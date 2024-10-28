@@ -4,12 +4,9 @@ metadata:
   name: flink-config
 build:
   artifacts:
-    - image: ping-processor
-      context: .
+    - image: ping-processor-flink
       docker:
-        dockerfile: Dockerfile
-      tags:
-        - latest
+        dockerfile: flink/Dockerfile
   tagPolicy:
     gitCommit: {}
   local:
@@ -21,13 +18,16 @@ deploy:
     hooks:
       after:
         - host:
-            command: ["kubectl", "delete", "flinkdeployment", "ping-processor"]
+            command: ["sh", "-c", "kubectl delete --wait=true flinkdeployment ping-processor || true"]
             os: [darwin, linux]
         - host:
-            command: ["sleep", "5"]
+            command: ["sh", "-c", "kubectl wait --for=delete flinkdeployment/ping-processor --timeout=60s || true"]
             os: [darwin, linux]
         - host:
             command: ["kubectl", "apply", "-f", "flink/base/flinkdeployment.yaml"]
+            os: [darwin, linux]
+        - host:
+            command: ["kubectl", "wait", "--for=condition=Available", "flinkdeployment/ping-processor", "--timeout=120s"]
             os: [darwin, linux]
 manifests:
   rawYaml:
