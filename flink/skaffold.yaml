@@ -8,17 +8,25 @@ build:
       context: .
       docker:
         dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/main/java/**/*.java"
-            dest: /opt/flink/usrlib
-      hooks:
-        after:
-          - command: ["kubectl", "rollout", "restart", "flinkdeployment/ping-processor"]
+  tagPolicy:
+    gitCommit: {}
+  local:
+    useBuildkit: true
 deploy:
   kubectl:
     flags:
       apply: ["--namespace=default"]
+    hooks:
+      after:
+        - host:
+            command: ["kubectl", "delete", "flinkdeployment", "ping-processor"]
+            os: [darwin, linux]
+        - host:
+            command: ["sleep", "5"]
+            os: [darwin, linux]
+        - host:
+            command: ["kubectl", "apply", "-f", "base/flinkdeployment.yaml"]
+            os: [darwin, linux]
 manifests:
   rawYaml:
     - base/rbac.yaml
