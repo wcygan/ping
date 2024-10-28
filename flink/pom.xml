@@ -45,6 +45,13 @@
             <version>28.3.0.1.20241014170349.9ebcb8552d88</version>
         </dependency>
 
+        <!-- Redis Dependencies -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
