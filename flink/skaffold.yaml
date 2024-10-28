@@ -6,8 +6,7 @@ build:
   artifacts:
     - image: ping-processor-flink
       docker:
-        dockerfile: Dockerfile
-      context: flink
+        dockerfile: flink/Dockerfile
       sync:
         manual:
           - src: "src/main/java/**/*.java"
