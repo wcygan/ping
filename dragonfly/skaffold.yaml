@@ -8,7 +8,7 @@ manifests:
 deploy:
   kubectl:
     flags:
-      apply: [ "--namespace=default" ]
+      apply: [ "--namespace=dragonfly-operator-system" ]
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
@@ -17,7 +17,7 @@ metadata:
 deploy:
   kubectl:
     flags:
-      apply: ["--namespace=default"]
+      apply: ["--namespace=dragonfly-operator-system"]
 manifests:
   rawYaml:
     - dragonfly.yaml
