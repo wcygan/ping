@@ -14,12 +14,19 @@ If you haven't already, start Minikube:
 
 ```bash
 minikube start
+eval $(minikube docker-env)
 ```
 
 Install the Kafka and Postgres operators:
 
 ```bash
 skaffold run -p bootstrap
+```
+
+Next, build the Flink image (needed since there is funky behavior with Skaffold):
+
+```bash
+DOCKER_BUILDKIT=1 docker build -f flink/Dockerfile -t ping-processor:latest flink 
 ```
 
 Next, start the remainder of the application:
