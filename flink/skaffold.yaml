@@ -4,16 +4,19 @@ metadata:
   name: flink-config
 build:
   artifacts:
-    - image: ping-processor-flink
+    - image: ping-processor
       docker:
-        dockerfile: flink/Dockerfile
+        dockerfile: Dockerfile
+        buildArgs:
+          DOCKER_BUILDKIT: "1"
       sync:
         infer:
           - "**/*.jar"
   tagPolicy:
-    gitCommit: {}
+    sha256: {}
   local:
     useBuildkit: true
+    useDockerCLI: true
 manifests:
   rawYaml:
     - base/rbac.yaml

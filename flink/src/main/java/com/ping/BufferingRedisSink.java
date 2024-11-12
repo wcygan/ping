@@ -62,7 +62,7 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
 
     @Override
     public void invoke(PingRequest value, Context context) throws IOException {
-        LOG.info("Received ping: {}", value);
+        LOG.info("Received a ping at: {}", value);
 
         buffer.add(value);
 
