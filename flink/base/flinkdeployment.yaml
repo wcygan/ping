@@ -4,6 +4,7 @@ metadata:
   name: ping-processor
 spec:
   image: ping-processor
+  imagePullPolicy: Always
   flinkVersion: v1_17
   flinkConfiguration:
     taskmanager.numberOfTaskSlots: "2"
@@ -19,14 +20,33 @@ spec:
     resource:
       memory: "2048Mi"
       cpu: 1
+    podTemplate:
+      spec:
+        containers:
+          - name: flink-main-container
+            lifecycle:
+              preStop:
+                exec:
+                  command: ["sh", "-c", "sleep 10"]
     
   taskManager:
     resource:
       memory: "2048Mi"
       cpu: 1
+    podTemplate:
+      spec:
+        containers:
+          - name: flink-main-container
+            lifecycle:
+              preStop:
+                exec:
+                  command: ["sh", "-c", "sleep 10"]
       
   job:
     jarURI: local:///opt/flink/usrlib/ping-processor-1.0-SNAPSHOT.jar
     parallelism: 2
     upgradeMode: stateless
     entryClass: com.ping.PingStreamProcessor
+    upgrade:
+      strategy: stateless
+      kind: last-state

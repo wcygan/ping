@@ -24,7 +24,11 @@ manifests:
 deploy:
   kubectl:
     flags:
-      apply: ["--namespace=default"]
+      apply: ["--namespace=default", "--force"]
+    patches:
+      - op: add
+        path: /spec/job/upgrade/timestamp
+        value: "{{.TIMESTAMP}}"
 ---
 apiVersion: skaffold/v4beta1
 kind: Config
