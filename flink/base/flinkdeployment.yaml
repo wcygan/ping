@@ -47,6 +47,3 @@ spec:
     parallelism: 2
     upgradeMode: stateless
     entryClass: com.ping.PingStreamProcessor
-    upgrade:
-      strategy: stateless
-      kind: last-state

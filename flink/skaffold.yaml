@@ -27,7 +27,7 @@ deploy:
       apply: ["--namespace=default", "--force"]
     patches:
       - op: add
-        path: /spec/job/upgrade/timestamp
+        path: /spec/job/savepointTriggerNonce
         value: "{{.TIMESTAMP}}"
 ---
 apiVersion: skaffold/v4beta1
