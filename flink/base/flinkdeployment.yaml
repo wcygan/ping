@@ -3,8 +3,8 @@ kind: FlinkDeployment
 metadata:
   name: ping-processor
 spec:
-  image: ping-processor
-  imagePullPolicy: Always
+  image: ping-processor:latest
+  imagePullPolicy: IfNotPresent
   flinkVersion: v1_17
   flinkConfiguration:
     taskmanager.numberOfTaskSlots: "2"

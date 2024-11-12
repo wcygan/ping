@@ -9,9 +9,9 @@ build:
         dockerfile: Dockerfile
         buildArgs:
           DOCKER_BUILDKIT: "1"
-      sync:
-        infer:
-          - "**/*.jar"
+#      sync:
+#        infer:
+#          - "**/*.jar"
   tagPolicy:
     sha256: {}
   local:
@@ -25,10 +25,10 @@ deploy:
   kubectl:
     flags:
       apply: ["--namespace=default", "--force"]
-    patches:
-      - op: add
-        path: /spec/job/savepointTriggerNonce
-        value: "{{.TIMESTAMP}}"
+    hooks:
+      before:
+        - host:
+            command: ["kubectl", "delete", "flinkdeployment", "ping-processor", "--ignore-not-found=true"]
 ---
 apiVersion: skaffold/v4beta1
 kind: Config

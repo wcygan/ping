@@ -62,7 +62,7 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
 
     @Override
     public void invoke(PingRequest value, Context context) throws IOException {
-        LOG.info("Received a ping at: {}", value);
+        LOG.info("Received a ping at timestamp: {}", value);
 
         buffer.add(value);
 
@@ -86,7 +86,7 @@ public class BufferingRedisSink extends RichSinkFunction<PingRequest>
         Exception lastException = null;
 
         while (attempts < MAX_RETRY_ATTEMPTS && !success) {
-            LOG.info("Flushing {} records to Redis (attempt {}/{})", buffer.size(), attempts + 1, MAX_RETRY_ATTEMPTS);
+            LOG.info("Attempting to flush {} record(s) to Redis (attempt {}/{})", buffer.size(), attempts + 1, MAX_RETRY_ATTEMPTS);
 
             try (Jedis jedis = jedisPool.getResource()) {
                 Pipeline pipeline = jedis.pipelined();

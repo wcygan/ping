@@ -205,3 +205,11 @@ kubectl exec -it ping-cache-0 -- redis-cli HGETALL ping:counters
  9) "minute:28834830"
 10) "10"
 ```
+
+## Flink Dashboard
+
+```bash
+kubectl port-forward svc/ping-processor-rest  8081
+```
+
+Visit http://localhost:8081/#/overview
